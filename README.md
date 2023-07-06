@@ -1,6 +1,6 @@
 # 👋 欢迎来到真 AI 健身俱乐部
 
-真 AI 健身俱乐部一个结合 AI 和社群，来帮助和督促你健身的俱乐部。
+真 AI 健身俱乐部一个结合 **AI** 和**社群**，来帮助和督促你健身的俱乐部。
 
 ## 🗣️ 口号
 
@@ -24,7 +24,7 @@
 
 ![](https://img.ifree258.top/16-XMDM/163-TruthAIOrg/1634-ai-fitness-20230530/WLT/wechat-qr-code-%E5%81%A5%E8%BA%AB.png)
 
-**限时特惠低价 89 元/月**，可扫下图付款加入。支持 48 小时内退款。
+可扫下图付款加入。支持 48 小时内退款。
 
 ![](https://img.ifree258.top/16-XMDM/163-TruthAIOrg/1634-ai-fitness-20230530/WLT/wechat-receipt-code-%E5%81%A5%E8%BA%AB.png)
 

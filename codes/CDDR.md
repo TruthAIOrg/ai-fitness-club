@@ -1376,7 +1376,7 @@ You
 </main>
 ```
 
-{content}是<section>中的每个标签的内容，并在其后加入一个换行符`\n`，如标签<h2><span><p>。
+{content}是<section>中的每个标签的内容，并在其后加入一个换行符`\n`，如标签`<h2><span><p>`。
 
 ---
 
@@ -2063,13 +2063,5 @@ git submodule add git@github.com:TruthAIOrg/ai-fitness-club.git 16-XMDM项目代
 ```
 
 这将会在 `/1-GR个人` 目录下添加一个新的 submodule，它的路径是 `1634-ai-fitness-club-20230530`，并指向 `git@github.com:TruthAIOrg/ai-fitness-club.git` 这个仓库。
-
----
-
-You
-
----
-
-删除`1634-ai-fitness-20230530 copy`和
 
 ---
