@@ -1,0 +1,7 @@
+.DS_Store
+.idea
+.vscode
+#files
+/datas/
+/training-videos/
+/planfit-res/
