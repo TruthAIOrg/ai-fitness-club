@@ -2006,9 +2006,70 @@ ChatGPT
 
 ---
 
+这是你需要执行的步骤：
 
+1. **清除现有的 `.git` 目录**:
+
+在你的项目目录中，删除`.git`文件夹。在 Unix 或 Linux 系统（包括 Mac OS X）中，你可以在项目目录打开终端，执行以下命令：
+
+```bash
+rm -rf .git
+```
+
+在 Windows 系统中，你可能需要打开项目文件夹，查看隐藏的文件并手动删除`.git`文件夹。
+
+这将会移除你项目中的所有 Git 历史记录。
+
+2. **重新初始化 Git**：
+
+在你的项目目录中，打开终端，然后执行：
+
+```bash
+git init
+```
+
+这将会在你的项目中创建一个新的 `.git` 目录，以便于重新开始使用 Git。
+
+3. **关联新的 GitHub 仓库**：
+
+你可以用下面的命令来添加新的远程仓库：
+
+```bash
+git remote add origin git@github.com:TruthAIOrg/ai-fitness-club.git
+```
+
+4. **提交并推送你的更改**：
+
+在你做了一些更改并准备好推送它们到新的 GitHub 仓库后，你可以执行：
+
+```bash
+git add .
+git commit -m "Initial commit"
+git push -u origin master
+```
+
+5. **设置为 `/1-GR个人` 的 submodule**：
+
+进入 `/1-GR个人` 的目录，然后执行：
+
+```bash
+git submodule add git@github.com:TruthAIOrg/ai-fitness-club.git 1634-ai-fitness-club-20230530
+```
+
+实际执行
+
+```Shell
+git submodule add git@github.com:TruthAIOrg/ai-fitness-club.git 16-XMDM项目代码/163-TruthAIOrg/1634-ai-fitness-club-20230530
+```
+
+这将会在 `/1-GR个人` 目录下添加一个新的 submodule，它的路径是 `1634-ai-fitness-club-20230530`，并指向 `git@github.com:TruthAIOrg/ai-fitness-club.git` 这个仓库。
 
 ---
 
+You
 
-git submodule add git@github.com:TruthAIOrg/ai-fitness-club.git 16-XMDM项目代码/163-TruthAIOrg/1634-ai-fitness-club-20230530
+---
+
+删除`1634-ai-fitness-20230530 copy`和
+
+---
