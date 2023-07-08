@@ -36,7 +36,10 @@ class Daka(Plugin):
             msg: ChatMessage = e_context["context"]["msg"]
             logger.debug("[Daka] content 打卡！msg: %s" % msg)
             daka_content = msg.content.split('\n')  # 将字符串按行分割为列表
+            # TODO search content by nickname
+            # target_content = 
             last_content = daka_content[-1]  # 获取最后一行
+            # TODO 截取 nickname 空格后的内容
             logger.debug("[Daka] content 打卡！last_content: %s" % last_content)
             e_context["context"].content = f'请你随机使用一种风格说一句夸奖语来鼓励用户"{msg.actual_user_nickname}"打卡健身。并且可以根据内容{last_content}来发挥。一定要真诚！语言风趣，字数不超过30字。你会用一种类似于人类的方式回应。你会用emoji表达情绪，如：😄😉😜。'
             e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑

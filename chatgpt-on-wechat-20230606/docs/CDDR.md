@@ -736,10 +736,50 @@ git push
 
 ---
 
+## 20230706
+
 You
 
 ---
 
-我
+wechaty 能获取群聊发消息人的群昵称吗？
+
+---
+
+## 20230707
+
+You
+
+---
+
+git 如何将 master 的代码合并到 role-fitness-coach 分支上？
+
+---
+
+ChatGPT
+
+---
+
+要将 `master` 分支的代码合并到 `role-fitness-coach` 分支，你需要执行以下步骤：
+
+1. 首先，确保你的本地 `master` 分支是最新的。如果你的远程仓库有新的更改，你需要先获取这些更改：
+
+    ```bash
+    git checkout master
+    git pull origin master
+    ```
+
+    其中 `origin` 是你远程仓库的别名，`master` 是你想要更新的分支。
+
+2. 然后，切换到 `role-fitness-coach` 分支，并将 `master` 分支的更改合并进来：
+
+    ```bash
+    git checkout role-fitness-coach
+    git merge master
+    ```
+
+这样，`master` 分支的代码就被合并到了 `role-fitness-coach` 分支上。如果有任何冲突，你需要解决这些冲突并提交更改。
+
+注意：在合并前，确保你在 `role-fitness-coach` 分支上的工作已经提交或者储存起来，因为合并操作可能会更改你的工作目录。
 
 ---
