@@ -1015,3 +1015,32 @@ cd 的位置需要自己创建吗？项目还没有 clone 可以直接 pull 吗 
 ```
 
 ---
+
+
+You
+
+---
+
+GitHub 在 Actions 执行 `Deploy to Server` 很久，5分钟多还在执行 loading。什么原因？怎么解决？
+
+```Shell
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/kevin/projects/163-TruthAIOrg
+            if [ -d "1634-ai-fitness-club-20230530" ]; then
+              cd 1634-ai-fitness-club-20230530
+              git pull
+            else
+              git clone git@github.com:TruthAIOrg/ai-fitness-club.git 1634-ai-fitness-club-20230530
+              cd 1634-ai-fitness-club-20230530
+            fi
+            cd chatgpt-on-wechat-20230606
+            sh scripts/restart.sh
+```
+
+---
