@@ -764,22 +764,254 @@ ChatGPT
 
 1. 首先，确保你的本地 `master` 分支是最新的。如果你的远程仓库有新的更改，你需要先获取这些更改：
 
-    ```bash
-    git checkout master
-    git pull origin master
-    ```
+   ```bash
+   git checkout master
+   git pull origin master
+   ```
 
-    其中 `origin` 是你远程仓库的别名，`master` 是你想要更新的分支。
+   其中 `origin` 是你远程仓库的别名，`master` 是你想要更新的分支。
 
 2. 然后，切换到 `role-fitness-coach` 分支，并将 `master` 分支的更改合并进来：
 
-    ```bash
-    git checkout role-fitness-coach
-    git merge master
-    ```
+   ```bash
+   git checkout role-fitness-coach
+   git merge master
+   ```
 
 这样，`master` 分支的代码就被合并到了 `role-fitness-coach` 分支上。如果有任何冲突，你需要解决这些冲突并提交更改。
 
 注意：在合并前，确保你在 `role-fitness-coach` 分支上的工作已经提交或者储存起来，因为合并操作可能会更改你的工作目录。
+
+---
+
+## 20230710
+
+You
+
+---
+
+基于 chatgpt-on-wechat 项目开发的微信机器人，对接的 OpenAI API 接口，最近微信机器人老是没有反应，服务是正常运行的，怎么排查和解决？
+
+---
+
+ChatGPT
+
+---
+
+如果你的微信机器人没有反应，但服务是正常运行的，那么问题可能出现在以下几个地方：
+
+1. **网络问题**：检查你的服务器是否可以正常访问 OpenAI API 的接口，或者是否能够正常访问互联网。你可以在服务器上尝试 ping 一下 OpenAI 的 API 地址看看是否有响应。
+
+2. **OpenAI API 问题**：检查你的 OpenAI API key 是否过期，或者是否已经超过了使用限制。你可以登录你的 OpenAI 账户，在 dashboard 中查看 API key 的使用情况。
+
+3. **微信问题**：也可能是微信的问题，你的微信号可能被限制了某些功能，比如被限制了自动回复消息的功能，或者你的微信号被封了。
+
+4. **程序问题**：检查你的程序是否有未捕获的异常，是否有错误日志输出。你可以查看你的服务的运行日志，看看是否有错误信息。如果有错误信息，可以根据错误信息进行排查。
+
+5. **服务器资源问题**：检查服务器资源是否足够，例如 CPU、内存、磁盘空间等是否充足，有时候如果服务器资源不足，也可能导致服务运行异常。
+
+根据以上几个可能的问题，你可以进行一步步的排查，找到问题的原因，然后针对性的解决问题。希望这些信息能够帮到你。
+
+---
+
+## 202307011
+
+You
+
+---
+
+运行 Python 项目，nohup，systemd，docker 部署几种方式的区别和优缺点？
+
+---
+
+ChatGPT
+
+---
+
+1. **nohup**: nohup 是一个 UNIX 命令，它用来在系统后台不挂断地运行命令。当用户退出系统/关闭终端后，nohup 命令会继续运行相应的进程。它的主要优点是简单、易用。不需要额外安装任何软件，只要有一个终端，就能运行。然而，nohup 命令缺乏管理和配置功能，例如无法自动重启失败的进程，无法方便的查看进程状态等。
+
+2. **systemd**: systemd 是一个系统管理守护进程、工具和库的集合，用于取代 SystemV 初始化系统（init）。systemd 提供了诸如启动、停止、重启等更强大的进程管理功能，以及日志管理、系统挂载点管理等更完备的系统管理功能。然而，使用 systemd 需要一定的学习成本，配置相对复杂。
+
+3. **Docker**: Docker 是一种开源的应用容器引擎，使开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux 机器或 Windows 机器上。Docker 可以自动化部署应用，并通过隔离应用于系统和其他应用之间提供了额外的安全性。Docker 最大的优点是跨平台、可移植、易于扩展和维护。然而，Docker 的缺点是需要额外的资源来运行 Docker 容器，以及需要学习和管理 Docker 相关的知识和工具。
+
+总的来说，这三种方式各有优缺点，适合于不同的场景。nohup 更适合于快速部署一些简单的任务，systemd 更适合于需要复杂管理功能的系统服务，Docker 则更适合于需要大规模部署和管理的应用服务。
+
+---
+
+You
+
+---
+
+你能根据 `start.sh` 和 `shutdown.sh` 写一个 `restart.sh`吗？
+
+`start.sh`内容：
+
+```Shell
+#!/bin/bash
+#后台运行Chat_on_webchat执行脚本
+
+cd `dirname $0`/..
+export BASE_DIR=`pwd`
+echo $BASE_DIR
+
+# check the nohup.out log output file
+if [ ! -f "${BASE_DIR}/nohup.out" ]; then
+  touch "${BASE_DIR}/nohup.out"
+echo "create file  ${BASE_DIR}/nohup.out"
+fi
+
+nohup python3 "${BASE_DIR}/app.py" & tail -f "${BASE_DIR}/nohup.out"
+
+echo "Chat_on_webchat is starting，you can check the ${BASE_DIR}/nohup.out"
+
+```
+
+`shutdown.sh`内容：
+
+```Shell
+#!/bin/bash
+
+#关闭服务
+cd `dirname $0`/..
+export BASE_DIR=`pwd`
+pid=`ps ax | grep -i app.py | grep "${BASE_DIR}" | grep python3 | grep -v grep | awk '{print $1}'`
+if [ -z "$pid" ] ; then
+        echo "No chatgpt-on-wechat running."
+        exit -1;
+fi
+
+echo "The chatgpt-on-wechat(${pid}) is running..."
+
+kill ${pid}
+
+echo "Send shutdown request to chatgpt-on-wechat(${pid}) OK"
+```
+
+---
+
+You
+
+---
+
+我在本地写代码，测试成功，上传到 GitHub，如何让 GitHub 自动 CICD 同步部署到 linux 云服务器上？
+
+---
+
+ChatGPT
+
+---
+
+GitHub 提供了自动化工作流的功能，称为 GitHub Actions。你可以利用它自动地执行 CI/CD（Continuous Integration/Continuous Deployment）流程。以下是一个基本的步骤来使用 GitHub Actions 自动部署到 Linux 服务器：
+
+1. 在你的 GitHub 仓库中创建一个新的工作流文件。这个文件需要放在 `.github/workflows` 目录下。可以在 GitHub 仓库页面上选择 "Actions"，然后点击 "New workflow"。或者在你的本地仓库创建一个 `.github/workflows` 目录，并在其中创建一个 yaml 文件，如 `deploy.yml`。
+
+2. 在新创建的 `deploy.yml` 文件中配置你的工作流。你可能需要使用 SSH 连接到你的云服务器，然后执行一些命令来拉取新的代码并重新启动服务。以下是一个基本的示例配置：
+
+   ```yaml
+   name: Deploy to server
+   on: [push]
+
+   jobs:
+     deploy:
+       runs-on: ubuntu-latest
+       steps:
+         - name: Checkout code
+           uses: actions/checkout@v2
+
+         - name: Deploy to Server
+           uses: appleboy/ssh-action@master
+           with:
+             host: ${{ secrets.SERVER_HOST }}
+             username: ${{ secrets.SERVER_USERNAME }}
+             key: ${{ secrets.SERVER_SSH_KEY }}
+             script: |
+               cd /path/to/your/project
+               git pull
+               sh restart.sh
+   ```
+
+   这个工作流中定义了两个步骤：一个是检出（checkout）你的代码，另一个是部署到服务器。部署到服务器的步骤中，我们使用了一个叫 `appleboy/ssh-action` 的 GitHub Actions 插件，它能帮助我们通过 SSH 连接到服务器。这个插件需要一些参数，包括你的服务器地址、用户名和 SSH 密钥。这些信息保存在 GitHub 的 secrets 中，是为了保护你的敏感信息不被公开。
+
+3. 在你的 GitHub 仓库中设置 secrets。进入你的仓库页面，点击 "Settings"，然后选择 "Secrets"，在这里添加你的服务器地址（`SERVER_HOST`）、用户名（`SERVER_USERNAME`）和 SSH 密钥（`SERVER_SSH_KEY`）。
+
+4. 现在，每次你推送代码到 GitHub 时，这个工作流就会自动执行，连接到你的服务器，然后执行定义的脚本，例如拉取新的代码并重启服务。
+
+这只是一个基本的示例，实际上你可能需要根据你的项目情况进行一些调整，例如添加构建步骤，或者处理不同的部署环境等。
+
+需要注意的是，你的服务器需要能够从外部访问，且 GitHub 的运行环境需要有权限连接到你的服务器。所以你的服务器应该开放 SSH 的对应端口（默认是 22），并且你需要提供一个有足够权限的用户和对应的 SSH 密钥。
+
+---
+
+You
+
+---
+
+SSH 密钥（SERVER_SSH_KEY）填什么？怎么获取
+
+---
+
+ChatGPT
+
+---
+
+SSH 密钥是一种在服务器和客户端之间建立安全连接的方式。在 GitHub Actions 中，我们通常使用 SSH 私钥作为 `SERVER_SSH_KEY` 的值，以便能够从 GitHub Actions 的运行环境（客户端）安全地连接到你的服务器。
+
+以下是在 Linux 或 MacOS 上生成 SSH 密钥对（包括公钥和私钥）的基本步骤：
+
+1. 打开终端。
+
+2. 输入以下命令：
+
+   ```
+   ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+   ```
+
+   在提示你输入文件位置时，你可以直接按 Enter 使用默认位置（一般在 `~/.ssh/` 目录下）。然后会提示你输入一个密码，你可以选择输入也可以直接按 Enter 跳过。
+
+3. 完成上述步骤后，会在 `~/.ssh/` 目录下生成两个文件：`id_rsa` 和 `id_rsa.pub`。`id_rsa` 是你的私钥，`id_rsa.pub` 是你的公钥。
+
+在 GitHub Actions 中，我们需要使用私钥作为 `SERVER_SSH_KEY`。你可以通过以下命令查看私钥内容：
+
+```
+cat ~/.ssh/id_rsa
+```
+
+然后复制输出的内容（包括 `-----BEGIN RSA PRIVATE KEY-----` 和 `-----END RSA PRIVATE KEY-----`），并将其作为 `SERVER_SSH_KEY` 的值。
+
+注意：你的私钥非常敏感，不应该被公开或分享。如果你的私钥泄露，其他人可能会使用它来访问你的服务器。
+
+然后，你需要将你的公钥添加到服务器的 `~/.ssh/authorized_keys` 文件中，以允许使用对应的私钥进行 SSH 登录。你可以通过以下命令查看公钥内容：
+
+```
+cat ~/.ssh/id_rsa.pub
+```
+
+然后复制输出的内容，登录到你的服务器，打开 `~/.ssh/authorized_keys` 文件（如果文件不存在，则创建它），并将公钥内容粘贴到文件中。
+
+现在，你应该能够使用你的私钥从 GitHub Actions 的运行环境连接到你的服务器了。
+
+如果你的服务器运行的是 Windows，生成和使用 SSH 密钥对的方式可能会不同。在这种情况下，你可能需要查阅你的服务器或 SSH 服务的文档来获取详细的步骤。
+
+---
+
+You
+
+---
+
+cd 的位置需要自己创建吗？项目还没有 clone 可以直接 pull 吗 ？ `restart.sh`是在项目根目录下 `scripts/`目录下。
+
+```Shell
+        script: |
+            cd /path/to/your
+            if [ -d "project" ]; then
+            cd project
+            git pull
+            else
+            git clone <your-repo-url> project
+            cd project
+            fi
+            sh scripts/restart.sh
+
+```
 
 ---

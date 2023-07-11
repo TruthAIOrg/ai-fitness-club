@@ -1,0 +1,26 @@
+name: Deploy to server
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/kevin/projects/163-TruthAIOrg
+            if [ -d "1634-ai-fitness-club-20230530" ]; then
+              cd 1634-ai-fitness-club-20230530
+              git pull
+            else
+              git clone git@github.com:TruthAIOrg/ai-fitness-club.git 1634-ai-fitness-club-20230530
+              cd 1634-ai-fitness-club-20230530
+            fi
+            sh scripts/restart.sh

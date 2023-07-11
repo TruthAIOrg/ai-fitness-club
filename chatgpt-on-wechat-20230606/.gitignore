@@ -6,6 +6,8 @@ __pycache__/
 venv*
 *.pyc
 config.json
+docker-compose.yaml
+
 QR.png
 nohup.out
 tmp
