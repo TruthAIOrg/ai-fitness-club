@@ -1091,11 +1091,242 @@ ChatGPT
 
 ---
 
-
 You
 
 ---
 
 这个项目在 `Deploy to Server` 阶段 `sh scripts/restart.sh` 启动成功后，需要扫码登录，但是 GitHub Actions 中点不开，它就一直执行到超时为止。怎么解决？
+
+---
+
+ChatGPT
+
+---
+
+在部署到服务器的阶段，你需要使用一个无需扫码登录的方式来启动你的服务。
+
+Wechaty 提供了一个叫做 PadLocal 的 Puppet，它可以通过 token 来自动登录，不需要扫码。但是，PadLocal 不是免费的，你需要购买相应的 token。
+
+要使用 PadLocal，你需要将下面的环境变量添加到你的 `.env` 文件中：
+
+```
+WECHATY_PUPPET=wechaty-puppet-padlocal
+WECHATY_PUPPET_PADLOCAL_TOKEN=your-padlocal-token
+```
+
+然后，你需要在你的 Python 代码中导入并使用这个 Puppet：
+
+```python
+from wechaty import Wechaty, Contact
+from wechaty_plugin_contrib import DingDongPlugin, RoomInviterPlugin
+from wechaty_puppet_padlocal import PuppetPadlocal
+
+puppet = PuppetPadlocal(options=PuppetPadlocalOptions(token='your-padlocal-token'))
+
+bot = Wechaty(puppet=puppet).use([DingDongPlugin(), RoomInviterPlugin()])
+```
+
+最后，你需要在 `restart.sh` 中启动你的服务时，确保这些环境变量被正确设置：
+
+```shell
+WECHATY_PUPPET=wechaty-puppet-padlocal \
+WECHATY_PUPPET_PADLOCAL_TOKEN=your-padlocal-token \
+python3 your_script.py
+```
+
+这样，你的服务在启动时就会使用 PadLocal 来登录，而不需要扫码。
+
+---
+
+You
+
+---
+
+一个字符串列表`daka_content`，找到含有字符`{msg.actual_user_nickname}`的目标字符串`target_content`，请用 Python 实现。
+
+---
+
+ChatGPT
+
+---
+
+可以使用以下代码实现查找目标字符串：
+
+```python
+daka_content = [...]  # 字符串列表
+target_content = None
+
+for content in daka_content:
+    if '{msg.actual_user_nickname}' in content:
+        target_content = content
+        break
+
+print(target_content)
+```
+
+在上面的代码中，`daka_content`是一个字符串列表，存储了一些字符串内容。我们使用一个循环遍历列表中的每个字符串，然后使用 `in` 运算符检查字符串中是否包含目标字符串 `'{msg.actual_user_nickname}'`。如果找到匹配的字符串，我们将其赋值给 `target_content` 并退出循环。
+
+最后，我们打印输出 `target_content`，即包含 `{msg.actual_user_nickname}` 的目标字符串。如果没有找到匹配的字符串，`target_content` 的值将为 `None`。
+
+---
+
+You
+
+---
+
+`target_content` 值是 `{msg.actual_user_nickname}`+` `+`{actual_content}`，我要获取{actual_content}，用 Python 实现。
+
+---
+
+ChatGPT
+
+---
+
+如果你的 `target_content` 的格式为 `{msg.actual_user_nickname} {actual_content}`，并且你想提取出 `{actual_content}` 的部分，你可以使用字符串的分割操作来实现。以下是一个示例代码：
+
+```python
+target_content = "{msg.actual_user_nickname} {actual_content}"
+
+# 使用空格分割字符串，并获取分割后的第二部分
+actual_content = target_content.split(" ", 1)[1]
+
+print(actual_content)
+```
+
+在上面的代码中，我们使用 `split()` 函数将字符串按空格进行分割，并使用索引 `[1]` 来获取分割后的第二部分，即 `{actual_content}` 的部分。然后，我们将提取出的 `actual_content` 打印输出。请根据你的实际情况将 `target_content` 替换为你的字符串。
+
+---
+
+You
+
+---
+
+怎么处理`target_content`=None 时，报错如下：
+
+```Shell
+actual_content = target_content.split(" ", 1)[1]
+AttributeError: 'NoneType' object has no attribute 'split'
+```
+
+---
+
+ChatGPT
+
+---
+
+如果 `target_content` 的值可能为 `None`，你可以在进行字符串分割操作之前先进行空值判断。以下是一个示例代码：
+
+```python
+target_content = None
+
+if target_content is not None:
+    actual_content = target_content.split(" ", 1)[1]
+    print(actual_content)
+else:
+    print("target_content is None")
+```
+
+在上面的代码中，我们使用 `if` 语句先判断 `target_content` 是否为 `None`，只有当 `target_content` 不为 `None` 时才执行字符串分割操作。如果 `target_content` 为 `None`，则直接输出提示信息。通过这样的判断，可以避免在 `target_content` 为 `None` 时出现属性错误的情况。
+
+---
+
+You
+
+---
+
+以下两种写法有什么区别？
+
+```Python
+            logger.debug("[Daka] content target_content: %s" % target_content)
+
+```
+
+```Python
+            logger.debug("[Daka] content target_content:{}".format(target_content))
+
+```
+
+---
+
+ChatGPT
+
+---
+
+这两种写法在输出日志时有略微的差别。
+
+1. `logger.debug("[Daka] content target_content: %s" % target_content)` 使用了百分号格式化字符串的方式，将 `target_content` 的值通过 `%s` 的占位符插入到字符串中。
+
+2. `logger.debug("[Daka] content target_content:{}", target_content)` 使用了大括号和占位符的方式，类似于格式化字符串中的 `{}`，其中的 `{}` 会被 `target_content` 的值替换。
+
+在功能上，这两种写法没有本质的区别，都是用于将变量的值输出到日志中。选择使用哪种写法主要是个人偏好和代码风格的选择。
+
+需要注意的是，第一种写法中使用了百分号 `%` 进行字符串格式化，在新版本的 Python 中，推荐使用更现代化的格式化方式，如 f-string 或 `.format()` 方法。所以，如果在较新的 Python 版本中，推荐使用第二种写法或其他现代化的格式化方式。
+
+---
+
+You
+
+---
+
+我要在用户在群聊参与接龙后，随机发送一张美女图片奖励，你能给我提供一些指导和 Python 实现方案吗？
+
+---
+
+ChatGPT
+
+---
+
+如果你想实现这个功能，你需要做的是：
+
+1. 监听群聊消息，判断用户是否参与了接龙。
+2. 从预先准备好的图片集中随机选择一张图片。
+3. 将图片发送到群聊。
+
+以下是一个简单的示例，展示如何在 Wechaty 中实现这个功能：
+
+```python
+from wechaty import (
+    Contact,
+    FileBox,
+    Message,
+    Wechaty,
+    Room
+)
+import os
+import random
+
+class JielongBot(Wechaty):
+    """
+    Jielong Bot
+    """
+    async def on_message(self, msg: Message):
+        """
+        listen for message event
+        """
+        room = msg.room()
+        talker = msg.talker()
+
+        if room and msg.text() == '我要参与接龙':
+            # 用户参与了接龙，随机选择一张图片
+            images = os.listdir('/path/to/your/images/directory')
+            chosen_image = random.choice(images)
+            file_box = FileBox.from_file(os.path.join('/path/to/your/images/directory', chosen_image))
+
+            # 发送图片到群聊
+            await msg.say(file_box)
+
+        print(msg)
+
+async def main():
+    # if you want to use padlocal puppet,
+    # just replace WECHATY_PUPPET_SERVICE_TOKEN with WECHATY_PUPPET_PADLOCAL_TOKEN
+    bot = JielongBot()
+
+    await bot.start()
+
+asyncio.run(main())
+```
+
+这个脚本会监听群聊中的消息，如果消息内容为“我要参与接龙”，则从指定的图片目录中随机选择一张图片，并发送到群聊中。你需要将`/path/to/your/images/directory` 替换为你的图片目录的实际路径。在运行这个脚本前，你需要确保你的图片目录中至少有一张图片。
 
 ---
