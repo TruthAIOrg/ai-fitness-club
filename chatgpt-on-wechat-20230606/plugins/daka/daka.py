@@ -44,11 +44,14 @@ class Daka(Plugin):
             logger.debug("[Daka] daka_contents=%s" % daka_contents)
             # search content by actual_user_nickname
             target_content = None
+            nickname = re.search(r'([\u4e00-\u9fa5a-zA-Z]+)', msg.actual_user_nickname).group(1)  # 匹配任何中英文字符，至少一个
+
             for daka_content in daka_contents:
                 logger.debug("[Daka] daka_content=%s" % daka_content)
-                logger.debug("[Daka] msg.actual_user_nickname=%s" % msg.actual_user_nickname)
+                # logger.debug("[Daka] msg.actual_user_nickname=%s" % msg.actual_user_nickname)
+                logger.debug("[Daka] nickname=%s" % nickname)
 
-                if msg.actual_user_nickname in daka_content:
+                if nickname in daka_content:
                     target_content = daka_content
                     break
 
@@ -57,14 +60,19 @@ class Daka(Plugin):
 
             if target_content is not None:
                 # 截取 nickname 空格后的内容
-                # 使用空格分割字符串，并获取分割后的第二部分
-                actual_content = target_content.split(" ", 1)[1]
-                logger.debug("[Daka] content actual_content: %s" % actual_content)
-                # nickname = re.search(r'([\u4e00-\u9fa5a-zA-Z]+)', target_content).group(1)  # 匹配任何中英文字符，至少一个
-                # logger.debug("[Daka] content nickname={}".format(nickname))
-                e_context["context"].content = f'请你随机使用一种风格，夸赞用户"{msg.actual_user_nickname}"打卡健身，根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得之类的。重要的是：夸赞一定要真诚！可以采用反夸法。语言风趣幽默，字数不超过30字。你会用一种类似于人类的方式回应。用合适的语气词，如：哇。用适当的emoji表达情绪，如：😄😉😜。'
-                e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑
-                return
+                # 使用空格分割字符串
+                split_result = target_content.split(" ", 1)
+                # 获取分割后的第二部分
+                if len(split_result) > 1:
+                    actual_content = split_result[1]
+                    logger.debug("[Daka] content actual_content: %s" % actual_content)
+                    e_context["context"].content = f'请你随机使用一种风格，夸赞用户"{nickname}"打卡健身，根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得之类的。重要的是：夸赞一定要真诚！可以采用反夸法。语言风趣幽默，字数不超过30字。你会用一种类似于人类的方式回应。用合适的语气词，如：哇。用适当的emoji表达情绪，如：😄😉😜。'
+                    e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑
+                    return
+                # 如果只有昵称，内容为空
+                else:
+                    # actual_content = ""  # 或者根据需求设置其他默认值
+                    logger.warn("[Daka] len of target_content=1! actual_user_nickname={}, daka_content={}".format(msg.actual_user_nickname, daka_content))
             else:
                 logger.warn("[Daka] target_content is None! actual_user_nickname={}, daka_content={}".format(msg.actual_user_nickname, daka_content))
 
