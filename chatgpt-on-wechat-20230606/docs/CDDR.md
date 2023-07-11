@@ -1016,12 +1016,11 @@ cd 的位置需要自己创建吗？项目还没有 clone 可以直接 pull 吗 
 
 ---
 
-
 You
 
 ---
 
-GitHub 在 Actions 执行 `Deploy to Server` 很久，5分钟多还在执行 loading。什么原因？怎么解决？
+GitHub 在 Actions 执行 `Deploy to Server` 很久，5 分钟多还在执行 loading。什么原因？怎么解决？
 
 ```Shell
       - name: Deploy to Server
@@ -1042,5 +1041,61 @@ GitHub 在 Actions 执行 `Deploy to Server` 很久，5分钟多还在执行 loa
             cd chatgpt-on-wechat-20230606
             sh scripts/restart.sh
 ```
+
+---
+
+You
+
+---
+
+阿里云服务器 Ubuntu 可以安装 zshell 让终端更好看方便吗？
+
+---
+
+ChatGPT
+
+---
+
+是的，你可以在阿里云的 Ubuntu 服务器上安装 Zsh 和 Oh My Zsh，来提升你的命令行体验。
+
+1. **安装 Zsh**：在 Ubuntu 服务器上，可以使用 apt-get 安装 Zsh：
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install zsh
+   ```
+
+2. **设置 Zsh 为默认 Shell**：安装完成后，你可以通过 `chsh` 命令将默认的 Shell 从 bash 更改为 Zsh：
+
+   ```bash
+   chsh -s $(which zsh)
+   ```
+
+   输入你的用户密码后，再次打开新的 Terminal 窗口，你应该已经在使用 Zsh 了。
+
+3. **安装 Oh My Zsh**：[Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh) 是一个开源的 Zsh 配置管理工具，它包含了很多有用的功能，比如主题支持和插件系统等。你可以通过 curl 或 wget 来安装它：
+
+   ```bash
+   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+   ```
+
+   或者
+
+   ```bash
+   sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+   ```
+
+4. **配置 Oh My Zsh**：Oh My Zsh 的配置文件位于 `~/.zshrc`，你可以在这个文件中更改 Zsh 的设置，比如更改主题和添加插件等。
+
+注意，这些操作都需要有相应的权限，并且在操作过程中可能会因为网络等问题需要多次尝试。在修改系统设置时，一定要谨慎操作，确保你理解你正在做什么。
+
+---
+
+
+You
+
+---
+
+这个项目在 `Deploy to Server` 阶段 `sh scripts/restart.sh` 启动成功后，需要扫码登录，但是 GitHub Actions 中点不开，它就一直执行到超时为止。怎么解决？
 
 ---

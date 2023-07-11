@@ -27,8 +27,4 @@ jobs:
               git clone git@github.com:TruthAIOrg/ai-fitness-club.git 1634-ai-fitness-club-20230530
               cd 1634-ai-fitness-club-20230530
             fi
-            echo "Changing directory to chatgpt-on-wechat-20230606"
-            cd chatgpt-on-wechat-20230606
-            echo "Running restart.sh script"
-            sh scripts/restart.sh
             echo "Done"
