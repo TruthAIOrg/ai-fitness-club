@@ -4,4 +4,5 @@
 #files
 /datas/
 /training-videos/
-/planfit-res/
+/planfit*/
+*.zip

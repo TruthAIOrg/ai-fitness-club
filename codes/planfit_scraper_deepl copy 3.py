@@ -1,7 +1,9 @@
 import os
 import requests
-from bs4 import BeautifulSoup
 import sqlite3
+import json
+from bs4 import BeautifulSoup
+from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
 
 def download_file(url, directory, filename=None):
     if filename is None:
@@ -13,7 +15,7 @@ def download_file(url, directory, filename=None):
     return filepath
 
 def setup_database():
-    db_path = os.path.join('..', 'datas', 'planfit.db')  # Specify the path of the database
+    db_path = os.path.join('..', 'datas', 'planfit-res-zh-deepl.db')  # Specify the path of the database
     conn = sqlite3.connect(db_path)  # Connect to the SQLite database    
     cursor = conn.cursor()
 
@@ -63,13 +65,8 @@ def scrape_planfit(conn, cursor):
             resource_response = requests.get(resource_url)
             resource_soup = BeautifulSoup(resource_response.text, 'html.parser')
 
-            directory = os.path.join('..', 'planfit-res', title)
+            directory = os.path.join('..', 'planfit-res-zh-deepl', title)
             os.makedirs(directory, exist_ok=True)
-
-            # download video
-            video = resource_soup.select_one('video.Desktop_video__INdvY')
-            src_url = video['src'].replace("-watermarked", "")
-            download_file(src_url, directory)
 
             # write sections
             sections = resource_soup.select('main > section')
@@ -77,13 +74,54 @@ def scrape_planfit(conn, cursor):
             for section in sections:
                 for tag in section.find_all(['h2', 'h3', 'h4', 'h5', 'p', 'span']):
                     content += tag.text + "\n"
-            
+
+            # with open(os.path.join(directory, 'content.txt'), 'w', encoding='utf-8') as f:
+            #     f.write(content)
+
+            # DeepL API url
+            url = "https://api-free.deepl.com/v2/translate"
+
+            # 定义你的 API 密钥和翻译目标语言
+            api_key = '45f19435-2521-4e40-ebb2-17489d5f119d:fx'
+            target_lang = 'ZH'
+
+            # 将爬取到的英文文本进行分块，每块不超过4900字符（DeepL API 的限制）
+            chunks = [content[i:i+4900] for i in range(0, len(content), 4900)]
+
+            # 初始化一个空的字符串来储存翻译结果
+            content_zh = ''
+
+            # 对每一块进行翻译
+            for chunk in chunks:
+                # 定义 API 请求的数据
+                data = {
+                    'auth_key': api_key,
+                    'text': chunk,
+                    'target_lang': target_lang,
+                }
+                print(f"正在翻译 {title}...")
+                # 发送 API 请求
+                response = requests.post(url, data=data)
+
+                # 将响应的 JSON 数据转换为 Python 字典
+                result = json.loads(response.text)
+
+                # 将翻译的结果添加到 content_zh
+                for translation in result['translations']:
+                    content_zh += translation['text']
+                    print(f"翻译中={content_zh}...")
+
+
+            # 将翻译后的中文文本写入到文件中
+            with open(os.path.join(directory, 'content-zh-deepl.txt'), 'w', encoding='utf-8') as f:
+                f.write(content_zh)
+
             # save data to database
             try:
                 cursor.execute('''
-                    INSERT INTO resources (model_id, title, resource_url, content)
-                    VALUES (?, ?, ?, ?)
-                ''', (model_id, title, src_url, content))
+                    INSERT INTO resources (model_id, title, content)
+                    VALUES (?, ?, ?)
+                ''', (model_id, title, content))
 
                 conn.commit()  # 提交更改
 

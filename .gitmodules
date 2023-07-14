@@ -1,0 +1,6 @@
+[submodule "chatgpt-on-wechat-20230606/plugins/plugin_summary"]
+	path = chatgpt-on-wechat-20230606/plugins/plugin_summary
+	url = git@github.com:lanvent/plugin_summary.git
+[submodule "chatgpt-on-wechat-20230606/plugins/timetask"]
+	path = chatgpt-on-wechat-20230606/plugins/timetask
+	url = git@github.com:haikerapples/timetask.git

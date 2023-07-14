@@ -1,8 +1,16 @@
 # 脚本代码
 
+`/Users/kevin/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/aaf3c93cbce3b46d9b1f46752ddd7d38/Message`
+
 ## 批量导出微信聊天记录
 
-`get_key_form_source.py` 获取 key。
+`get_key_form_source.py` 获取 `key:0xf8df050ad20847dfa01ce4de5c83a811a41f3425df154045baa23672497febf5`
+
+按最近时间查看
+
+```Shell
+ls -lth *.db
+```
 
 msg.db -手动批量导出-> msg.json
 
