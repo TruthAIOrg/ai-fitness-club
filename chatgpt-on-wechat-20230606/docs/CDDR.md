@@ -1369,3 +1369,116 @@ else:
 这样，如果分割后的结果列表长度大于 1，则可以安全地获取第二个元素作为 `actual_content`，否则可以根据需求设置一个默认值，比如空字符串 `""`。这样即使分割结果不符合预期，也能避免索引越界的错误。
 
 ---
+
+## 20230714
+
+You
+
+---
+
+在项目A中 git clone 了项目B，但是在项目A中 git status 看不到项目B，我要将项目B一起push，告诉我具体操作步骤和命令。
+
+---
+
+ChatGPT4
+
+---
+
+一般来说，当你在一个Git项目中克隆另一个Git项目时，后者会被当作一个子模块（submodule）。子模块在主项目中是一个独立的Git仓库，它有自己的历史、分支等。如果你想把子模块的代码和主项目一起push，你需要先在主项目中添加对子模块的引用。下面是详细的步骤：
+
+1. 在主项目（项目A）中，添加对子模块（项目B）的引用。你可以在主项目的根目录下运行以下命令来添加子模块：
+   
+   ```
+   git submodule add git@github.com:lanvent/plugin_summary.git
+   git submodule add git@github.com:haikerapples/timetask.git
+   ```
+
+2. 添加子模块后，你会看到一个新的文件 `.gitmodules`。这个文件包含了子模块的URL和在主项目中的路径。你可以使用以下命令来查看这个文件：
+
+   ```
+   cat .gitmodules
+   ```
+
+3. 现在，你可以把`.gitmodules`文件和子模块的当前状态添加到主项目的Git仓库。使用以下命令来添加和提交这些改变：
+
+   ```
+   git add .gitmodules
+   git add <子模块的路径>
+   git commit -m "Add submodule"
+   ```
+
+4. 最后，你可以把主项目push到远程仓库。这样，主项目和子模块的代码都会被push到远程仓库。
+
+   ```
+   git push origin master
+   ```
+
+请注意，当其他人克隆主项目时，他们需要使用 `--recursive` 选项来同时克隆子模块，或者在克隆主项目后使用 `git submodule update --init` 命令来初始化和更新子模块。
+
+---
+
+
+You
+
+---
+
+我只是执行了`git submodule add git@github.com:lanvent/plugin_summary.git`，然后发现位置不对，把`plugin_summary`和`.gitmodules`给删了，然后重新执行`git submodule add git@github.com:lanvent/plugin_summary.git`就报错`fatal: 请确认 .gitmodules 文件在工作区里`。告诉我具体操作步骤和命令。
+
+---
+
+
+ChatGPT4
+
+---
+
+对于你的问题，因为你只是在文件系统层面删除了子模块的目录和`.gitmodules`文件，但git仍然在它的系统中跟踪这个子模块。你需要在Git的系统中删除对这个子模块的跟踪，然后重新添加子模块。以下是操作步骤和命令：
+
+1. 首先，在终端中切换到你的项目的根目录，然后运行以下命令来查看所有的子模块：
+
+    ```bash
+    git submodule status
+    ```
+
+    这个命令会显示所有的子模块，以及它们的当前状态和路径。
+
+2. 找到你想要删除的子模块的路径，然后使用以下命令来从git的系统中删除这个子模块：
+
+    ```bash
+    git submodule deinit plugin_summary
+    git rm plugin_summary
+    ```
+
+    这里 `plugin_summary` 是你要删除的子模块的路径。这两个命令会从git的系统中删除子模块，并且也会从文件系统中删除子模块的代码。
+
+3. 运行 `git commit` 命令来提交这个更改：
+
+    ```bash
+    git commit -m "Remove submodule"
+    ```
+
+4. 现在你应该可以重新添加子模块了。使用以下命令来添加子模块：
+
+    ```bash
+    git submodule add git@github.com:lanvent/plugin_summary.git
+    ```
+
+    这个命令会重新添加子模块，并且也会在文件系统中创建子模块的目录。你可能需要再次运行 `git commit` 命令来提交这个更改。
+
+5. 最后，你可以使用 `git push` 命令来将这些更改推送到远程仓库：
+
+    ```bash
+    git push
+    ```
+
+这样应该就可以解决你的问题了。
+
+---
+
+
+You
+
+---
+
+git 提交暂存修改错了，怎么撤回？
+
+---

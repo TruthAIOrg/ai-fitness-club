@@ -16,7 +16,7 @@ itchat.pkl
 *.log
 user_datas.pkl
 chatgpt_tool_hub/
-plugins/**/
+# plugins/**/
 !plugins/bdunit
 !plugins/dungeon
 !plugins/finish

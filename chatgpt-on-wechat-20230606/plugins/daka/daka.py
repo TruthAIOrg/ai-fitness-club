@@ -66,13 +66,16 @@ class Daka(Plugin):
                 if len(split_result) > 1:
                     actual_content = split_result[1]
                     logger.debug("[Daka] content actual_content: %s" % actual_content)
-                    e_context["context"].content = f'请你随机使用一种风格，夸赞用户"{nickname}"打卡健身，根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得之类的。重要的是：夸赞一定要真诚！可以采用反夸法。语言风趣幽默，字数不超过30字。你会用一种类似于人类的方式回应。用合适的语气词，如：哇。用适当的emoji表达情绪，如：😄😉😜。'
+                    e_context["context"].content = f'请你随机使用一种风格，夸赞用户"{nickname}"打卡健身，根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得之类的。重要的是：夸赞一定要真诚！可以采用反夸法。语言风趣幽默，字数不超过30字。你会用一种类似于人类的方式回应。用合适的语气词，如：哇，喔，哇塞，厉害呀，太棒啦。用适当的emoji表达情绪，如：😄😉😜。'
                     e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑
                     return
                 # 如果只有昵称，内容为空
                 else:
                     # actual_content = ""  # 或者根据需求设置其他默认值
                     logger.warn("[Daka] len of target_content=1! actual_user_nickname={}, daka_content={}".format(msg.actual_user_nickname, daka_content))
+                    e_context["context"].content = f'请你提醒用户{nickname}发送的打卡内容为空，并根据用户{nickname}的历史记录，为{nickname}制定今天的健身和饮食安排。'
+                    e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑
+                    return
             else:
                 logger.warn("[Daka] target_content is None! actual_user_nickname={}, daka_content={}".format(msg.actual_user_nickname, daka_content))
 
