@@ -60,15 +60,16 @@ class ScheduledMessage(Plugin):
             reply.type = ReplyType.TEXT
 
             curday = datetime.datetime.now().strftime("%m月%d日")
-            reply.content = f'''@真AI健身教练Jessie 打卡#接龙
-
-{curday}打卡 伙伴们加油💪🏻
-昵称 打卡第n天
+            reply.content = f'''{curday}真AI健身 伙伴们加油💪🏻
+例 打卡第n天
 训练部位：训练动作 训练时长
 （可选：饮食、睡眠记录
 （可选：其他心得分享
 
-复制以上内容，修改发送打卡。'''
+@真AI健身教练Jessie #接龙
+
+复制以上内容，参与接龙打卡。
+'''
             e_context["reply"] = reply
             e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑，一般会覆写reply
 
