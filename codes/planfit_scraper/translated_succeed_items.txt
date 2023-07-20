@@ -122,6 +122,7 @@ Dumbbell Prone W Raise
 Dumbbell Prone A Raise
 Dumbbell Prone T Raise
 Dumbbell Prone Y Raise
+Prone Y Raise
 Incline Dumbbell Prone W Raise
 Incline Dumbbell Prone A Raise
 Incline Dumbbell Prone T Raise
@@ -142,6 +143,7 @@ Dumbbell Bicep Curl
 EZ-Bar Bicep Curl
 Dumbbell Hammer Curl
 Concentration Curl
+Preacher Curl Machine
 Cable Hammer Curl
 Band Hammer Curl
 Barbell Preacher Curl
@@ -192,6 +194,7 @@ Overhead Cable Tricep ExtensionⅠ
 Lying Barbell Tricep Extension
 Dips Machine
 Close Grip Bench Press
+One Arm Cable Tricep Extension
 Overhead Cable Tricep ExtensionⅡ
 Tricep Pushdown Machine
 Lying Dumbbell Tricep Extension
@@ -210,9 +213,6 @@ Standing Elbow Touch
 Circles Arm
 Shoulder External and Internal Rotation
 Prayer Push
-Prone Y Raise
-Preacher Curl Machine
-One Arm Cable Tricep Extension
 Straight Arm Dumbbell Kick Back
 Overhead Dumbbell Triceps Extension
 Band Triceps Pushdown
@@ -298,6 +298,7 @@ Hammer Strength Plate-Loaded Lateral Raise
 Hammer Strength Plate-Loaded Iso-Lateral Decline Chest Press
 One Arm Hammer Strength Plate-Loaded Iso-Lateral Decline Chest Press
 One Arm Hammer Strength MTS Iso-Lateral Incline Press
+One Arm Hammer Strength MTS Iso-Lateral Decline Press
 One Arm Hammer Strength MTS Iso-Lateral Chest Press
 One Arm Hammer Strength Plate-Loaded Iso-Lateral Horizontal Bench Press
 One Arm Hammer Strength Plate-Loaded Iso-Lateral Wide Chest
@@ -319,6 +320,7 @@ Lateral Raise Machine
 Seated Overhead Press
 Dumbbell Front Raise
 Barbell Front Raise
+Face Pull
 Reverse Cable Fly
 Barbell Shrug
 Pec Deck Rear Delt
@@ -327,6 +329,7 @@ Bent Over Lateral Raise
 Smith Machine Overhead Press
 Band Front Raise
 Plate Front Raise
+Cable Front Raise
 Band Lateral Raise
 Cable Lateral Raise
 Cable Shoulder Press
@@ -446,6 +449,7 @@ Bodyweight Full Squat with Overhead Press
 Bodyweight Knee Thrust
 Bodyweight Woodchoppers
 Butt Kick Row
+Inchworm Mountain Climbers
 Leg Front Lift Jack
 Lunge with Leg Lift
 Skater Hop Tap
@@ -457,6 +461,7 @@ Assault Bike
 Step Box Mountain Climber
 Devil Press
 My Mountain
+Leg
 Barbell Squat
 Lunge
 Leg press
@@ -666,6 +671,7 @@ Soccer
 Futsal
 Tennis
 Golf
+Basketball
 Badminton
 Climbing
 Kendo
@@ -697,9 +703,178 @@ Foot Volleyball
 Driving Range
 Indoor Golf Simulator
 Tai Chi
-One Arm Hammer Strength MTS Iso-Lateral Decline Press
-Face Pull
-Cable Front Raise
-Inchworm Mountain Climbers
-Leg
-Basketball
+---------------------
+Whole body
+Well-toned back
+Wide shoulders, back
+Wide, long back
+Lower back
+Lowermiddle back
+Inner back
+Midlower trap
+Thick back
+Firm back
+Wide back
+Lower back strengthening
+Central trap
+Core, back, hip-up
+Focus on back
+Back target
+Core, lower back
+-
+More powerful back
+Central trap, middle back
+Central, upper trap
+Central trap, wide back
+Arm, back strengthening
+Pullup assistance, wide back
+Overall upper body
+Central trap strengthening
+Lower, wide back
+Widening of the back
+Wideening of the back
+Back, traps
+One Back exercise will be recommended
+
+Toned arms
+Biceps, back
+Toned arms, forearms
+Front, inner biceps
+Forearm, toned arm
+One Biceps exercise will be recommended
+Easy biceps target
+Chest, shoulder line
+Toned arm
+Toned arms, lower chest
+Firm triceps, toned arms
+One Triceps exercise will be recommended
+Upper body, forearm
+Toned arm line
+Triceps strengthening
+Overall chest
+Chest, upper body 
+Chest muscle line
+Outer chest line
+Lower chest
+Less burden on the joints
+Upper chest
+Shoulder strengthening
+Beginner push-up 
+Overall chest line
+Inner chest line
+Wide chest
+Wide upper chest
+One Chest exercise will be recommended
+Inner chest
+Overall shoulder
+Wide shoulder
+Lateral shoulder
+Shoulder volume
+Front shoulder
+Front shoulder volume
+Rear delts
+Upper trap
+Lateral, front shoulder
+Lateral shoulder, trap
+Shoulder focused push-up 
+Muscle strength, cardio
+Shoulder, chest
+Core, shoulder
+Shoulder, triceps
+Front, lateral shoulder
+Front, side shoulder
+One Shoulder exercise will be recommended
+Rear target
+Easy shoulder
+Posterior, lateral shoulder
+One Forearm exercise will be recommended
+Burning calories
+Running, burning calories 
+Outdoor running
+High jump
+Burning calories, core
+Hip-up, burning calories
+Calorie burning
+High-level jump rope
+Core, hip-up
+One Cardio exercise will be recommended
+Lower body, hip up
+Reduce belly fat, waist size
+Abs, burning calories
+Lower body, burning calories
+Burning belly fat, calories
+Lower body
+Removal thigh flab
+Front thigh
+Back of the thigh
+Hip targeting
+Front thigh, hip up 
+Hip up, inner thigh 
+Back of calves
+Inner thigh
+Well-toned hip
+Lower body, hip-up
+Removal of belly fat
+Overall thigh, hip-up 
+Front thigh, hip up
+Outer thigh
+Front thigh support
+Endurance, fat burning
+Front thigh, knee stability
+Hamstring, core
+Hip-up body weight
+Overall lower body
+Thigh concentration
+Sense of balance, thighs target
+Barbell squat assist
+Overall lower, upper muscle strength
+The back of the thigh, hip up 
+Well-toned thigh line
+A representative hip-up workout 
+Lower body, cardio
+Hip focus
+Calf target
+Overall lower body, hip up
+Fixing pelvic, hip-up
+Lose weight, lower body
+Calf muscle
+Back thigh, hip-up
+Focus on your hip muscles, hip-up
+Lower body 
+Hip-up, lower back
+Hip muscle
+Thigh, hip muscle
+Thighs, hips
+Increased flexibility, thighs
+Hamstring, core, knee stabilization
+Hip-up
+Calorie burnout
+Lower body, calorie burnout
+Front lower body, core
+Thigh training
+Hamstring, back of thigh
+Knee, lower body
+Hamstrin, hip-up
+The back of the thigh, hip up
+One Leg exercise will be recommended
+Focus on hip-up
+Calf strengthening
+Strong thighs, hip-up
+Cute puppy, cardio 
+Happy time with my parents
+Increase flexibility, body calibration
+Strengthening overall physical workout, cpr
+Calibration, posture calibration
+Remove stress, military life
+Physical recovery
+Strengthening the stress, cardiopulmonary earth
+Aerobic, anaerobic movements
+Physical fitness
+Cardiopulmonary endurance, quickness
+Cardiopulmonary function improvement, systemic development
+Increased flexibility, muscle strength
+Quickness, composure enhancement
+Flexibility, core muscle strengthening
+Aerobic, joint enhancement
+Improve agility, agility
+Improvement of systemic workout, quickness

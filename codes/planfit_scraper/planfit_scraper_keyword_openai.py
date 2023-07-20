@@ -3,6 +3,8 @@ import requests
 import json
 import time
 from bs4 import BeautifulSoup
+from tqdm import tqdm
+import openai
 
 '''
 爬取 planfit 资源，将健身关键字翻译为中文并存储到json文件中。
@@ -12,11 +14,15 @@ from bs4 import BeautifulSoup
 更新：2023-07-14
 '''
 
-CUSTOM_DICTIONARY_FILE = 'custom_dictionary.json' # 存储健身关键字的文件
-TRANSLATED_ITEMS_FILE = 'translated_items.txt'
-FAILED_ITEMS_FILE = 'failed_items.txt'
-DEEPL_API_KEY = '45f19435-2521-4e40-ebb2-17489d5f119d:fx'  # 请替换为你的 DeepL API 密钥
+CUSTOM_DICTIONARY_FILE = 'custom_dictionary_openai.json'  # 存储健身关键字的文件
+TRANSLATED_ITEMS_FILE = 'translated_succeed_items.txt'
+FAILED_ITEMS_FILE = 'translated_failed_items.txt'
 
+# Load keys from config.json
+with open('config.json', 'r') as f:
+    config = json.load(f)
+    openai.api_key = config['open_ai_api_key']
+    openai.api_base = config['open_ai_api_base']
 
 def scrape_planfit():
     base_url = 'https://guide.planfit.ai'
@@ -77,24 +83,39 @@ def translate_dictionary():
     else:
         translated_items = []
 
+    keys = list(dictionary.keys())  # 获取所有的关键字
+    pbar = tqdm(total=len(keys), ncols=70)  # 创建一个进度条
+
     # 对 dictionary 中的每个键进行翻译
-    for key in dictionary.keys():
+    for key in keys:
         if key in translated_items:  # 如果关键字已经被翻译过，就跳过
+            pbar.update(1)  # 更新进度条
             continue
 
         for retry in range(3):  # 重试3次
             try:
                 print(f"开始翻译 {key} ...")
-                params = {
-                    'auth_key': DEEPL_API_KEY,
-                    'text': key,
-                    'target_lang': 'ZH'
-                }
-                response = requests.post('https://api-free.deepl.com/v2/translate', data=params, timeout=30)
-                response.raise_for_status()  # 如果请求失败，抛出异常
-                translation = response.json()['translations'][0]['text']
+
+                # 使用 OpenAI 的 API 进行翻译
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "请你担任翻译专家，我将提供给你「健身」领域关于「动作」和「身体部位」的词汇，请你将其翻译为中文，只提供英文对应的中文，不要拼音和任何解释。",
+                        },
+                        {
+                            "role": "user",
+                            "content": key,
+                        },
+                    ]
+                )
+                
+                # 提取模型生成的消息，即译文
+                translation = response['choices'][0]['message']['content']
+                
                 dictionary[key] = translation
-                print(f"成功翻译 {key} 为 {translation}。")
+                print(f"成功翻译 {key} 为 {translation}")
                 time.sleep(1)  # 每次请求后暂停1秒，避免频繁请求
 
                 # 将翻译后的 dictionary 保存回 JSON 文件
@@ -106,7 +127,7 @@ def translate_dictionary():
                     f.write(key + '\n')
 
                 break  # 如果成功，就跳出重试循环
-            except requests.exceptions.RequestException as e:
+            except Exception as e:
                 print(f"翻译 {key} 失败：{e}")
                 if retry < 2:  # 如果还没有重试3次，就继续重试
                     print("重试...")
@@ -118,6 +139,9 @@ def translate_dictionary():
                         f.write(key + '\n')
                     break
 
+        pbar.update(1)  # 更新进度条
+
+    pbar.close()  # 关闭进度条
     print(f"成功将健身关键字翻译为中文并保存到 {CUSTOM_DICTIONARY_FILE} 文件中。")
 
 
