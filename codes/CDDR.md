@@ -11897,3 +11897,57 @@ usermod -aG sudo newuser
 以上就是在 Ubuntu 服务器上创建新用户并设置密码的步骤。在完成这些步骤后，新用户就可以使用他们的用户名和密码登录系统了。
 
 ---
+
+You
+
+---
+
+Ubuntu 如何将 Python 别名设置为 Python3。
+
+---
+
+
+You
+
+---
+
+在 Ubuntu 服务器上启动服务成功：
+
+```Shell
+❯ python app.py                                
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 143-843-690
+127.0.0.1 - - [22/Jul/2023 13:17:50] "GET /resources/1001 HTTP/1.1" 200 -
+```
+
+怎么让其他人可以从外部访问？
+
+---
+
+
+ChatGPT4
+
+---
+
+默认情况下，Flask 应用只在本地运行（localhost 或 127.0.0.1），并且只能通过本地访问。如果你想让 Flask 应用对外部网络可见，你需要在启动应用时将主机设置为 '0.0.0.0'。修改你的代码如下：
+
+```python
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)
+```
+
+这样 Flask 就会在你的所有可用网络接口上启动应用，包括公共和私有网络接口，其他人就可以通过你的公共 IP 地址访问 Flask 应用了。
+
+请注意，如果你的服务器位于防火墙后，或者是在云上（例如 AWS、Google Cloud、Azure 等），你可能还需要配置防火墙或安全组，以允许外部流量到达你的 Flask 应用。具体操作会因你的网络环境和提供商的设置而不同。
+
+另外，`app.run(debug=True)` 是在开发环境下使用的，如果是在生产环境下，不应该开启 debug 模式，并且应该使用一个生产级别的 WSGI 服务器，例如 Gunicorn 或 uWSGI，来运行你的 Flask 应用。
+
+请注意，直接将 Flask 应用公开到 Internet 上可能会存在安全风险。在生产环境中，你应该考虑使用 HTTPS 加密你的流量，并确保你的应用是最新的，所有已知的安全漏洞都已修复。你还应该定期检查和更新你的服务器，以保持安全性。
+
+---
