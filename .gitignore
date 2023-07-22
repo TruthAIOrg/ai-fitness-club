@@ -2,7 +2,8 @@
 .idea
 .vscode
 #files
-/datas/
+datas/**/
+!datas/db_planfit_res-20230719.db
 /training-videos/
 /planfit*/
 
