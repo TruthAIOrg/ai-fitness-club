@@ -12,3 +12,4 @@ codes/planfit_scraper/config.json
 codes/planfit_scraper/config copy.json
 codes/planfit_scraper/.qiniu_pythonsdk_hostscache.json
 codes/planfit_scraper/__pycache__/
+codes/ai-fitness-service/nohup.out
