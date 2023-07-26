@@ -44,7 +44,8 @@ class Daka(Plugin):
             logger.debug("[Daka] daka_contents=%s" % daka_contents)
             # search content by actual_user_nickname
             target_content = None
-            nickname = re.search(r'([\u4e00-\u9fa5a-zA-Z]+)', msg.actual_user_nickname).group(1)  # 匹配任何中英文字符，至少一个
+            # nickname = re.search(r'([\u4e00-\u9fa5a-zA-Z]+)', msg.actual_user_nickname).group(1)  # 匹配任何中英文字符，至少一个
+            nickname = re.split(r'-|\s', msg.actual_user_nickname)[0] # 匹配以`-`,` `切割的第一部分
 
             for daka_content in daka_contents:
                 logger.debug("[Daka] daka_content=%s" % daka_content)
