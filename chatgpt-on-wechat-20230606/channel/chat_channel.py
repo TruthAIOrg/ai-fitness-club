@@ -380,7 +380,7 @@ class ChatChannel(Channel):
         else:
             auto_timed_message_cron = conf().get("auto_timed_message_cron")
             auto_timed_message_cron_morning_reminder = conf().get("auto_timed_message_cron_morning_reminder")
-            auto_timed_message_cron_ranking = conf().get("auto_timed_message_cron_morning_ranking")
+            auto_timed_message_cron_ranking = conf().get("auto_timed_message_cron_ranking")
         # 18:00 定时任务，自动发送健身打卡提醒
         if conf().get("is_auto_timed_message"):
             logger.info("add scheduler auto_timed_message_cron={}".format(auto_timed_message_cron))
