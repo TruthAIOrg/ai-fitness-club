@@ -161,6 +161,18 @@ class ChatChannel(Channel):
         # reply的发送步骤
         self._send_reply(context, reply)
 
+    # 排行榜
+    def _send_scheduled_message_ranking(self, reply: Reply = Reply()) -> Reply:
+        logger.debug("[chat_channel] do _send_scheduled_message_ranking")
+        e_context = PluginManager().emit_event(
+            EventContext(
+                Event.ON_SCHEDULED_MESSAGE,
+                {"channel": self, "context": "ranking", "reply": reply},
+            )
+        )
+        reply = e_context["reply"]
+        self.send_the_group(reply)
+
     # 18:00 定时发送消息，健身打卡提醒
     def _send_scheduled_message(self, reply: Reply = Reply()) -> Reply:
         logger.debug("[chat_channel] do _send_scheduled_message")
@@ -364,9 +376,11 @@ class ChatChannel(Channel):
         if conf().get("debug"):
             auto_timed_message_cron = conf().get("debug_auto_timed_message_cron")
             auto_timed_message_cron_morning_reminder = conf().get("debug_auto_timed_message_cron_morning_reminder")
+            auto_timed_message_cron_ranking = conf().get("debug_auto_timed_message_cron_ranking")
         else:
             auto_timed_message_cron = conf().get("auto_timed_message_cron")
             auto_timed_message_cron_morning_reminder = conf().get("auto_timed_message_cron_morning_reminder")
+            auto_timed_message_cron_ranking = conf().get("auto_timed_message_cron_morning_ranking")
         # 18:00 定时任务，自动发送健身打卡提醒
         if conf().get("is_auto_timed_message"):
             logger.info("add scheduler auto_timed_message_cron={}".format(auto_timed_message_cron))
@@ -375,6 +389,11 @@ class ChatChannel(Channel):
         if conf().get("is_auto_timed_message_morning_reminder"):
             logger.info("add scheduler auto_timed_message_cron_morning_reminder={}".format(auto_timed_message_cron_morning_reminder))
             scheduler.add_job(self._send_scheduled_message_morning_reminder, 'cron', **auto_timed_message_cron_morning_reminder)
+        # 排行榜
+        if conf().get("is_auto_timed_message_ranking"):
+            logger.info("add scheduler auto_timed_message_cron_ranking={}".format(auto_timed_message_cron_ranking))
+            scheduler.add_job(self._send_scheduled_message_ranking, 'cron', **auto_timed_message_cron_ranking)
+   
         scheduler.start()
 
     # 取消session_id对应的所有任务，只能取消排队的消息和已提交线程池但未执行的任务

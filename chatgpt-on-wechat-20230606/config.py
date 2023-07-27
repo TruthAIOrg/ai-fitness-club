@@ -32,10 +32,13 @@ available_setting = {
     "auto_timed_message_groups": [], # 自动定时发送消息的群名称列表
     "is_auto_timed_message": False, # 是否自动定时发送消息
     "is_auto_timed_message_morning_reminder": False, # 是否自动定时发送消息2
+    "is_auto_timed_message_ranking": False, # 是否自动定时发送消息
     "auto_timed_message_cron": {}, # 自动定时发送消息的cron表达式
     "debug_auto_timed_message_cron": {}, # 调式用！自动定时发送消息的cron表达式
     "auto_timed_message_cron_morning_reminder": {}, # 自动定时发送消息的cron表达式
     "debug_auto_timed_message_cron_morning_reminder": {}, # 调式用！自动定时发送消息的cron表达式
+    "auto_timed_message_cron_ranking": {}, # 自动定时发送消息的cron表达式
+    "debug_auto_timed_message_cron_ranking": {}, # 调式用！自动定时发送消息的cron表达式
     "trigger_by_self": False,  # 是否允许机器人触发
     "image_create_prefix": ["画", "看", "找"],  # 开启图片回复的前缀
     "concurrency_in_session": 1,  # 同一会话最多有多少条消息在处理中，大于1可能乱序

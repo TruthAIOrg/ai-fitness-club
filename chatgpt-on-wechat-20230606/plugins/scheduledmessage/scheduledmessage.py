@@ -12,6 +12,7 @@ from common.log import logger
 from plugins import *
 from functools import partial
 from config import conf
+from plugins.daka_stats.main import DakaStats
 
 import time
 import datetime
@@ -48,6 +49,10 @@ class ScheduledMessage(Plugin):
             logger.debug("GPT生成内容：{}".format(newstext))
 
             # TODO 获取排行榜
+            daka_stats = DakaStats()
+            ranking_text = daka_stats.send_daily_ranking()
+            logger.debug("[ScheduledMessage] on_scheduled_message ranking_text: {}" .format(ranking_text))
+
 
             reply = Reply()  # 创建一个回复对象
             reply.content = "@所有人 " + newstext # 回复内容

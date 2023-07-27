@@ -2,7 +2,7 @@ import os
 import json
 import datetime
 
-dir_path = '/Users/kevin/1-GR个人/16-XMDM项目代码/163-TruthAIOrg/1634-ai-fitness-20230530/datas/db_msg_all'
+dir_path = '/Users/kevin/1-GR个人/16-XMDM项目代码/163-TruthAIOrg/1634-ai-fitness-club-20230530/datas/tmp'
 for filename in os.listdir(dir_path):
     if filename.endswith('.json'):
         file_path = os.path.join(dir_path, filename)
