@@ -3221,3 +3221,48 @@ You
 根据代码完成TODO部分。
 
 ---
+
+
+You
+
+---
+
+```Python
+    # 查询本期打卡天数
+    def _query_current_period_days(self, user):
+        c = self.conn.cursor()
+        # Calculate the start and end dates of the current period
+        today = datetime.date.today()
+        # Get the week number (from 1 to 53)
+        week_number = today.isocalendar()[1]
+        # Check if it's an odd week
+        is_odd_week = week_number % 2 == 1
+        # `start_date`是每年的单数周的周一，这样可以确保是每两周。
+        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+        # The end date is next Sunday
+        end_date = start_date + datetime.timedelta(days=13)
+        logger.debug("[DakaStats] _query_current_period_days start_date={}, end_date={}" .format(start_date, end_date))
+        c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
+        return c.fetchone()[0]
+
+    # 查询本期打卡天数排行榜
+    def _query_current_period_days_ranking(self):
+        c = self.conn.cursor()
+        # Calculate the start and end dates of the current period
+        today = datetime.date.today()
+        # Get the week number (from 1 to 53)
+        week_number = today.isocalendar()[1]
+        # Check if it's an odd week
+        is_odd_week = week_number % 2 == 1
+        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+        # The end date is next Sunday
+        end_date = start_date + datetime.timedelta(days=13)
+        logger.debug("[DakaStats] _query_current_period_days_ranking start_date={}, end_date={}" .format(start_date, end_date))
+        c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
+        return c.fetchall()
+```
+将本期的时间从两周换为「本月」，并将这两个方法的公共部分抽离，给我代码。
+
+---

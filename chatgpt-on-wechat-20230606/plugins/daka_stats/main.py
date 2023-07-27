@@ -5,6 +5,7 @@ import re
 import plugins
 import os
 import datetime
+import calendar
 from config import conf
 from plugins import *
 from common.log import logger
@@ -100,24 +101,67 @@ class DakaStats(Plugin):
         c.execute("SELECT COUNT(*) FROM daka_records WHERE user=?", (user,))
         return c.fetchone()[0]
     
-    # 查询本期打卡天数
+
+        # 获取本月的开始和结束日期
+    def _get_current_month_dates(self):
+        today = datetime.date.today()
+        # The start date is the first day of the current month
+        start_date = today.replace(day=1)
+        # The end date is the last day of the current month
+        _, last_day = calendar.monthrange(today.year, today.month)
+        end_date = today.replace(day=last_day)
+        logger.debug("[DakaStats] Current month start_date={}, end_date={}".format(start_date, end_date))
+        return start_date, end_date
+
+    # 查询本月打卡天数
     def _query_current_period_days(self, user):
         c = self.conn.cursor()
-        # Calculate the start and end dates of the current period
-        today = datetime.date.today()
-        # Get the week number (from 1 to 53)
-        week_number = today.isocalendar()[1]
-        # Check if it's an odd week
-        is_odd_week = week_number % 2 == 1
-        # `start_date`是每年的单数周的周一，这样可以确保是每两周。
-        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
-        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
-        # The end date is next Sunday
-        end_date = start_date + datetime.timedelta(days=13)
-        logger.debug("[DakaStats] _query_current_period_days start_date={}, end_date={}" .format(start_date, end_date))
+        start_date, end_date = self._get_current_month_dates()
         c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
         return c.fetchone()[0]
 
+    # 查询本月打卡天数排行榜
+    def _query_current_period_days_ranking(self):
+        c = self.conn.cursor()
+        start_date, end_date = self._get_current_month_dates()
+        c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
+        return c.fetchall()
+    
+    # # 查询本期打卡天数
+    # def _query_current_period_days(self, user):
+    #     c = self.conn.cursor()
+    #     # Calculate the start and end dates of the current period
+    #     today = datetime.date.today()
+    #     # Get the week number (from 1 to 53)
+    #     week_number = today.isocalendar()[1]
+    #     # Check if it's an odd week
+    #     is_odd_week = week_number % 2 == 1
+    #     # `start_date`是每年的单数周的周一，这样可以确保是每两周。
+    #     # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+    #     start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+    #     # The end date is next Sunday
+    #     end_date = start_date + datetime.timedelta(days=13)
+    #     logger.debug("[DakaStats] _query_current_period_days start_date={}, end_date={}" .format(start_date, end_date))
+    #     c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
+    #     return c.fetchone()[0]
+
+    # # 查询本期打卡天数排行榜
+    # def _query_current_period_days_ranking(self):
+    #     c = self.conn.cursor()
+    #     # Calculate the start and end dates of the current period
+    #     today = datetime.date.today()
+    #     # Get the week number (from 1 to 53)
+    #     week_number = today.isocalendar()[1]
+    #     # Check if it's an odd week
+    #     is_odd_week = week_number % 2 == 1
+    #     # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+    #     start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+    #     # The end date is next Sunday
+    #     end_date = start_date + datetime.timedelta(days=13)
+    #     logger.debug("[DakaStats] _query_current_period_days_ranking start_date={}, end_date={}" .format(start_date, end_date))
+    #     c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
+    #     return c.fetchall()
+    
 
     # 查询总打卡天数排行榜
     def _query_total_days_ranking(self):
@@ -125,22 +169,6 @@ class DakaStats(Plugin):
         c.execute("SELECT user, COUNT(*) as days FROM daka_records GROUP BY user ORDER BY days DESC")
         return c.fetchall()
 
-    # 查询本期打卡天数排行榜
-    def _query_current_period_days_ranking(self):
-        c = self.conn.cursor()
-        # Calculate the start and end dates of the current period
-        today = datetime.date.today()
-        # Get the week number (from 1 to 53)
-        week_number = today.isocalendar()[1]
-        # Check if it's an odd week
-        is_odd_week = week_number % 2 == 1
-        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
-        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
-        # The end date is next Sunday
-        end_date = start_date + datetime.timedelta(days=13)
-        logger.debug("[DakaStats] _query_current_period_days_ranking start_date={}, end_date={}" .format(start_date, end_date))
-        c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
-        return c.fetchall()
 
     # 发送打卡排行榜
     def send_daily_ranking(self):
