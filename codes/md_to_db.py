@@ -20,18 +20,28 @@ try:
     cursor = conn.cursor()
 
     # 创建表（如果不存在）
+    # cursor.execute("""
+    # CREATE TABLE IF NOT EXISTS daka_records(
+    #     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #     user TEXT,
+    #     date DATE,
+    #     content TEXT)
+    # """)
+                   
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS daka_records(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        nickname TEXT,
         user TEXT,
-        date DATE,
-        content TEXT)
+        content TEXT,
+        PRIMARY KEY(date, user));
     """)
 except Exception as e:
     logging.error("Error occurred when connecting to the database: %s", str(e))
     raise
 
 # 构造 markdown 文件的相对路径
+# md_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'datas', 'output', 'exercise_stats_2023-06-tmp.md'))
 md_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'datas', 'output', 'exercise_stats_2023-07-27-tmp.md'))
 
 try:
@@ -53,7 +63,7 @@ try:
         if user is None:
             logging.error("Could not find the user in block: %s", block)
             continue
-        user = user.group(1).strip()
+        user = user.group(1).replace(' ', '')  # 使用 replace 方法移除所有空格
 
         # 分割为不同的日期块
         date_blocks = block.split('#### ')[1:]
