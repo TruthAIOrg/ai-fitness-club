@@ -1,2 +1,3 @@
 flask
 flask_sqlalchemy
+SQLAlchemy>=4.7.1

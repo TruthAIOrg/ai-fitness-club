@@ -33,7 +33,9 @@ class Resource(db.Model):
 
 @app.route('/resources', methods=['GET'])
 def get_resources():
-    resources = Resource.query.all()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    resources = Resource.query.limit(per_page).offset((page - 1) * per_page).all()
     return jsonify([resource.to_json() for resource in resources])
 
 @app.route('/resources/<string:model_id>', methods=['GET'])
