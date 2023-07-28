@@ -50,11 +50,6 @@ class DakaStats(Plugin):
 
         logger.info("[DakaStats] inited")
 
-        # 创建定时任务，每天发送打卡排行榜
-        # self.scheduler = BackgroundScheduler()
-        # self.scheduler.add_job(self.send_daily_ranking, 'interval', minutes=1)
-        # self.scheduler.start()
-
     def on_scheduled_message(self, e_context: EventContext):
         total_days_ranking = self._query_total_days_ranking()
         current_period_days_ranking = self._query_current_period_days_ranking()
@@ -102,7 +97,7 @@ class DakaStats(Plugin):
         return c.fetchone()[0]
     
 
-        # 获取本月的开始和结束日期
+    # 获取本月的开始和结束日期
     def _get_current_month_dates(self):
         today = datetime.date.today()
         # The start date is the first day of the current month
@@ -170,37 +165,6 @@ class DakaStats(Plugin):
         return c.fetchall()
 
 
-    # 发送打卡排行榜
-    def send_daily_ranking(self):
-        total_days_ranking = self._query_total_days_ranking()
-        current_period_days_ranking = self._query_current_period_days_ranking()
-
-        ranking_text = "总打卡排行榜：\n"
-        for i, (user, days) in enumerate(total_days_ranking):
-            ranking_text += f"{i + 1}. {user}: {days}天\n"
-
-        ranking_text += "\n本期打卡排行榜：\n"
-        for i, (user, days) in enumerate(current_period_days_ranking):
-            ranking_text += f"{i + 1}. {user}: {days}天\n"
-
-        logger.debug("[DakaStats] send_daily_ranking ranking_text: {}" .format(ranking_text))
-        # return ranking_text
-    
-        # # Prepare a session for the bot to send the ranking text
-        # session_id = 'ranking'  # This can be any string, as long as it is unique for each conversation
-        # session = self.bot.sessions.build_session(session_id)
-        # session.add_query(ranking_text)
-        # # Get bot reply
-        # result = self.bot.reply_text(session)
-        # total_tokens, completion_tokens, reply_content = result['total_tokens'], result['completion_tokens'], result['content']
-        # logger.debug("[DakaStats] total_tokens: %d, completion_tokens: %d, reply_content: %s" % (total_tokens, completion_tokens, reply_content))
-        # if completion_tokens == 0:
-        #     reply = Reply(ReplyType.ERROR, "发送排行榜失败: " + reply_content)
-        # else:
-        #     reply = Reply(ReplyType.TEXT, reply_content)
-        # e_context['reply'] = reply
-        # e_context.action = EventAction.BREAK_PASS  # End the event and skip the default logic for handling context
-
     # receive message and save to database
     def on_receive_message(self, e_context: EventContext):
         context = e_context['context']
@@ -234,13 +198,50 @@ class DakaStats(Plugin):
         if re.search(r"#接龙", content) and re.search(r"\d{1,2}月\d{1,2}日", content):
             # Extract date from content
             match = re.search(r"(\d{1,2})月(\d{1,2})日", content)
-            # TODO 处理 content 为此用户运动内容
             if match:
                 month, day = map(int, match.groups())
                 year = datetime.date.today().year
                 date = datetime.date(year, month, day).isoformat()
-                self._insert_record(date, nickname, user, content)
-                logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content))
+                # 处理 content 为此用户内容
+                # Extract sections starting with a number and a dot
+                sections = re.findall(r'\d+\. .+?(?=\n\d+\. |$)', content, re.DOTALL)
+                # For each section
+                for section in sections:
+                    # Extract name from section
+                    name_match = re.search(r'\. ([^- ]+)', section)
+                    name = name_match.group(1) if name_match else None
+
+                    # Extract the rest of the section as content
+                    # TODO now content=Kevin涛-增肌 跳跃10分钟
+                    # want content=跳跃10分钟
+                    content_text = section[section.index('.')+1:].strip() if '.' in section else None
+
+                    # If the extracted name is the same as the user, insert the record into the database
+                    if name == user:
+                        if content_text != nickname: # content 为空字符串
+                            self._insert_record(date, nickname, user, content_text)
+                            logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
+                        else:
+                            logger.info("[DakaStats] _insert_record Not date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
+
+                # Split content into lines
+                # lines = content.split('\n')
+                # lines = re.split(r'\d+\. ', content)[1:]  # 以数字和点加空格进行切分，并且去除第一个空字符串
+                # For each line
+                # for line in lines:
+                #     # Extract name from line
+                #     name_match = re.search(r'\. ([^- ]+)', line)
+                #     name = name_match.group(1) if name_match else None
+
+                #     # Extract the last part of the line
+                #     content_match = re.search(r'\. (.+)$', line)
+                #     content_text = content_match.group(1) if content_match else None
+
+                #     # If the extracted name is the same as the user, insert the record into the database
+                #     if name == user:
+                #         self._insert_record(date, nickname, user, content_text)
+                #         logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
+
 
     def on_handle_context(self, e_context: EventContext):
         logger.debug("[DakaStats] enter on_handle_context")
@@ -283,7 +284,8 @@ class DakaStats(Plugin):
          
             # Reply the user's total check-in days and the current period's check-in days, and briefly encourage the user.
             query =  f"{user}，总共打卡了{total_days}天，本期打卡了{current_period_days}天。"
-            prompt = "你是健身教练，用户的打卡信息已经被你获取，你需要回复用户的打卡天数，并进行简单的鼓励。\n"
+            # goal_period_days = 30
+            prompt = "你是健身教练，用户的打卡信息已经被你获取，你需要回复用户的打卡天数。如果用户本期打卡天数不少于18天，进行简单赞扬，如果用户本期打卡天数少于18天，进行简单激励。\n"
             # Build a session for bot reply
             session = self.bot.sessions.build_session(session_id, prompt)
             session.add_query(query)
@@ -293,6 +295,36 @@ class DakaStats(Plugin):
             logger.debug("[DakaStats] total_tokens: %d, completion_tokens: %d, reply_content: %s" % (total_tokens, completion_tokens, reply_content))
             if completion_tokens == 0:
                 reply = Reply(ReplyType.ERROR, "打卡统计失败"+reply_content+"\n原始查询如下：\n"+query)
+            else:
+                reply = Reply(ReplyType.TEXT, reply_content)
+            e_context['reply'] = reply
+            e_context.action = EventAction.BREAK_PASS  # End the event and skip the default logic for handling context
+        elif "查询排行" in clist[0]:
+            total_days_ranking = self._query_total_days_ranking()
+            current_period_days_ranking = self._query_current_period_days_ranking()
+
+            ranking_text = "总打卡排行榜：\\n"
+            for i, (user, days) in enumerate(total_days_ranking):
+                ranking_text += f"{i + 1}. {user}: {days}天\\n"
+
+            ranking_text += "\\n本期打卡排行榜：\\n"
+            for i, (user, days) in enumerate(current_period_days_ranking):
+                ranking_text += f"{i + 1}. {user}: {days}天\\n"
+
+            logger.debug("[DakaStats] send_daily_ranking ranking_text: {}" .format(ranking_text))
+            # return ranking_text
+            # the prompt of output ranking
+            prompt = "请将以下的打卡排行榜发送到聊天频道：并简单激励大家参与。"
+            # Prepare a session for the bot to send the ranking text
+            session_id = 'ranking'  # This can be any string, as long as it is unique for each conversation
+            session = self.bot.sessions.build_session(session_id, prompt)
+            session.add_query(ranking_text)
+            # Get bot reply
+            result = self.bot.reply_text(session)
+            total_tokens, completion_tokens, reply_content = result['total_tokens'], result['completion_tokens'], result['content']
+            logger.debug("[DakaStats] total_tokens: %d, completion_tokens: %d, reply_content: %s" % (total_tokens, completion_tokens, reply_content))
+            if completion_tokens == 0:
+                reply = Reply(ReplyType.ERROR, "发送排行榜失败: " + reply_content)
             else:
                 reply = Reply(ReplyType.TEXT, reply_content)
             e_context['reply'] = reply

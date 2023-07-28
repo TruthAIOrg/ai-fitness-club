@@ -3266,3 +3266,106 @@ You
 将本期的时间从两周换为「本月」，并将这两个方法的公共部分抽离，给我代码。
 
 ---
+
+
+## 20230728
+
+You
+
+---
+
+```Python
+
+```
+根据代码，我要在`on_handle_context`中添加判断`if "查询排行" in clist[0]:`，也调用bot回复打卡排行榜数据。
+给我完整代码。
+
+---
+
+
+You
+
+---
+
+用正则表达式匹配`content`，获得{name}为`. `后的`-`或` `前的内容，{content}为`. `后的` `分割的最后一部分内容。
+给我代码。
+
+例如这个例子：
+'''
+content=07月27日真AI健身 伙伴们加油💪🏻
+例 打卡第n天
+训练部位：训练动作 训练时长
+（可选：饮食、睡眠记录
+（可选：其他心得分享
+
+@Beyond #接龙
+
+1. Kevin-增肌 
+2. 浪仔-增肌 
+跳跃10分钟
+3. 林文冠 第19天 ，跑步半小时
+4. R 51天 0725 中午爬楼70层
+5. 。 第25天，打羽毛球2h
+'''
+
+期望的结果是：
+'''
+{name}：['Kevin', '浪仔', '林文冠', 'R', '。']
+{content}：['', '跳跃10分钟', '第19天 ，跑步半小时', '51天 0725 中午爬楼70层', '第25天，打羽毛球2h']
+'''
+
+---
+
+ChatGPT4
+
+---
+
+```Python
+import re
+
+content = '''
+content=07月27日真AI健身 伙伴们加油💪🏻
+例 打卡第n天
+训练部位：训练动作 训练时长
+（可选：饮食、睡眠记录
+（可选：其他心得分享
+
+@Beyond #接龙
+
+1. Kevin涛-增肌 
+跳跃10分钟
+1. 林文冠 第19天 ，跑步半小时
+2. Reb 26 HIIT
+3. 。 第25天，打羽毛球2h
+'''
+
+# Extract sections starting with a number and a dot
+sections = re.findall(r'\d+\. .+?(?=\n\d+\. |$)', content, re.DOTALL)
+
+names = []
+contents = []
+
+# For each section
+for section in sections:
+    # Extract name from section
+    name_match = re.search(r'\. ([^- ]+)', section)
+    name = name_match.group(1) if name_match else None
+
+    # Extract the rest of the section as content
+    content_text = section[section.index('.')+1:].strip() if '.' in section else None
+
+    if name and content_text:
+        names.append(name)
+        contents.append(content_text)
+
+names, contents
+```
+
+根据你的正则表达式和提供的文本内容，我已经成功地抽取出了每一段的{name}和{content}：
+
+- {name}：['Kevin涛', '林文冠', 'Reb', '。']
+- {content}：['Kevin涛-增肌 \n跳跃10分钟', '林文冠 第19天 ，跑步半小时', 'Reb 26 HIIT', '。 第25天，打羽毛球2h']
+
+正则表达式用于从字符串中抽取匹配的子字符串。在这里，我们首先使用一个正则表达式抽取出文本中的每一段（每段以数字和点开头），然后对每一段分别抽取出`.`之后的`-`或` `之前的内容作为{name}，和`.`后的内容作为{content}。
+
+---
