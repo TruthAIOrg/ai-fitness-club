@@ -4,12 +4,17 @@
 #files
 datas/**/
 !datas/db_planfit_res-20230719.db
+!datas/output/
+
 /training-videos/
 /planfit*/
 
 *.zip
+*.psd
 codes/planfit_scraper/config.json
 codes/planfit_scraper/config copy.json
 codes/planfit_scraper/.qiniu_pythonsdk_hostscache.json
 codes/planfit_scraper/__pycache__/
 codes/ai-fitness-service/nohup.out
+chatgpt-on-wechat-20230606/plugins/daka_stats/output/records.md
+videos/
