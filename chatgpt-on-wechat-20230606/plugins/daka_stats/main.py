@@ -195,6 +195,7 @@ class DakaStats(Plugin):
         content = context.content
 
         # If content contains "#接龙" and match "\d{1,2}月\d{1,2}日", save the last content of one day.
+        # TODO 接龙判断群聊
         if re.search(r"#接龙", content) and re.search(r"\d{1,2}月\d{1,2}日", content):
             # Extract date from content
             match = re.search(r"(\d{1,2})月(\d{1,2})日", content)
@@ -223,24 +224,6 @@ class DakaStats(Plugin):
                             logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
                         else:
                             logger.info("[DakaStats] _insert_record Not date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
-
-                # Split content into lines
-                # lines = content.split('\n')
-                # lines = re.split(r'\d+\. ', content)[1:]  # 以数字和点加空格进行切分，并且去除第一个空字符串
-                # For each line
-                # for line in lines:
-                #     # Extract name from line
-                #     name_match = re.search(r'\. ([^- ]+)', line)
-                #     name = name_match.group(1) if name_match else None
-
-                #     # Extract the last part of the line
-                #     content_match = re.search(r'\. (.+)$', line)
-                #     content_text = content_match.group(1) if content_match else None
-
-                #     # If the extracted name is the same as the user, insert the record into the database
-                #     if name == user:
-                #         self._insert_record(date, nickname, user, content_text)
-                #         logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
 
 
     def on_handle_context(self, e_context: EventContext):
@@ -300,6 +283,8 @@ class DakaStats(Plugin):
             e_context['reply'] = reply
             e_context.action = EventAction.BREAK_PASS  # End the event and skip the default logic for handling context
         elif "查询排行" in clist[0]:
+            self.export_records_to_markdown()
+
             total_days_ranking = self._query_total_days_ranking()
             current_period_days_ranking = self._query_current_period_days_ranking()
 
@@ -329,6 +314,49 @@ class DakaStats(Plugin):
                 reply = Reply(ReplyType.TEXT, reply_content)
             e_context['reply'] = reply
             e_context.action = EventAction.BREAK_PASS  # End the event and skip the default logic for handling context
+
+
+    def export_records_to_markdown(self):
+        # Get the current month's start and end dates
+        start_date, end_date = self._get_current_month_dates()
+        
+        # Query the database for records in the current month
+        c = self.conn.cursor()
+        c.execute("SELECT date, user, content FROM daka_records WHERE date BETWEEN ? AND ? ORDER BY user, date", (start_date.isoformat(), end_date.isoformat()))
+        records = c.fetchall()
+
+        # Prepare an empty dictionary to hold the records
+        records_dict = {}
+
+        # Convert the records into the dictionary
+        for date, user, content in records:
+            if user not in records_dict:
+                records_dict[user] = []
+            records_dict[user].append((date, content))
+        
+        # Prepare a list to hold the sorted user data
+        sorted_user_data = sorted(records_dict.items(), key=lambda item: len(item[1]), reverse=True)
+
+        # Define the medal emojis
+        medal_emojis = ['🏅', '🥈', '🥉']
+
+        # Generate the markdown text
+        markdown_text = ''
+        for i, (user, user_records) in enumerate(sorted_user_data, 1):
+            # Add a medal emoji to the top 3 users
+            medal_emoji = medal_emojis[i - 1] if i <= 3 else ''
+            # Add the user's check-in days to the title
+            markdown_text += f'### {medal_emoji} {i}. {user} （本月打卡{len(user_records)}天）\n\n'
+            for date, content in user_records:
+                markdown_text += f'#### {date}\n\n{content}\n\n'
+
+        # Write the markdown text into a file
+        output_dir = os.path.join(os.path.dirname(__file__), 'output')
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        output_file = os.path.join(output_dir, 'records.md')
+        with open(output_file, 'w') as file:
+            file.write(markdown_text)
 
 
     def get_help_text(self, **kwargs):
