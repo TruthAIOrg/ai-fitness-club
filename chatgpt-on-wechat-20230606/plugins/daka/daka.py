@@ -61,13 +61,13 @@ class Daka(Plugin):
 
             if target_content is not None:
                 # 截取 nickname 空格后的内容
-                # 使用空格分割字符串
-                split_result = target_content.split(" ", 1)
+                # 使用空格或换行符进行分割
+                split_result = re.split(r'\s', target_content, 1)
                 # 获取分割后的第二部分
                 if len(split_result) > 1:
                     actual_content = split_result[1]
                     logger.debug("[Daka] content actual_content: %s" % actual_content)
-                    e_context["context"].content = f'请你随机使用一种风格，夸赞用户"{nickname}"打卡健身，根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得，只问一个问题。重要的是：夸赞一定要真诚！采用夸赞的艺术。语言风趣幽默，你会用一种类似于人类的方式回应,用一个合适的语气词，如：哇，喔，哇塞，厉害呀，太棒啦。用适当的emoji表达情绪，如：😄😉😜。总字数不超过30字。'
+                    e_context["context"].content = f'请你随机使用一种风格，1. 恭喜用户"{nickname}"打卡成功，2. 夸赞用户"{nickname}"。根据今天内容"{actual_content}"来发挥，并且可以进行反问，比如过往经验，训练感受，收获心得，只问一个问题。重要的是：夸赞一定要真诚！采用夸赞的艺术。语言风趣幽默，你会用一种类似于人类的方式回应,用一个合适的语气词，如：哇，喔，哇塞，厉害呀，太棒啦。用适当的emoji表达情绪，如：😄😉😜。总字数不超过30字。'
                     e_context.action = EventAction.BREAK  # 事件结束，进入默认处理逻辑
                     return
                 # 如果只有昵称，内容为空

@@ -17,6 +17,11 @@ from common import const
 from bridge.bridge import Bridge
 from apscheduler.schedulers.background import BackgroundScheduler
 
+
+RANKING_PROMPT = '''
+将以下内容「总打卡排行榜」和「本期打卡排行榜」原样发送到聊天频道：并简单激励大家参与。
+'''
+
 @plugins.register(name="daka_stats", desire_priority=-1, desc="A simple plugin to daka statistics", version="0.0.1", author="kevintao1024")
 class DakaStats(Plugin):
     def __init__(self):
@@ -46,8 +51,6 @@ class DakaStats(Plugin):
         # 接收消息：接收就触发
         self.handlers[Event.ON_RECEIVE_MESSAGE] = self.on_receive_message
         self.handlers[Event.ON_SCHEDULED_MESSAGE] = self.on_scheduled_message
-
-
         logger.info("[DakaStats] inited")
 
     def on_scheduled_message(self, e_context: EventContext):
@@ -65,7 +68,7 @@ class DakaStats(Plugin):
         logger.debug("[DakaStats] send_daily_ranking ranking_text: {}" .format(ranking_text))
         # return ranking_text
         # the prompt of output ranking
-        prompt = "请将以下的打卡排行榜发送到聊天频道："
+        prompt = RANKING_PROMPT
         # Prepare a session for the bot to send the ranking text
         session_id = 'ranking'  # This can be any string, as long as it is unique for each conversation
         session = self.bot.sessions.build_session(session_id, prompt)
@@ -109,53 +112,53 @@ class DakaStats(Plugin):
         return start_date, end_date
 
     # 查询本月打卡天数
-    def _query_current_period_days(self, user):
-        c = self.conn.cursor()
-        start_date, end_date = self._get_current_month_dates()
-        c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
-        return c.fetchone()[0]
-
-    # 查询本月打卡天数排行榜
-    def _query_current_period_days_ranking(self):
-        c = self.conn.cursor()
-        start_date, end_date = self._get_current_month_dates()
-        c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
-        return c.fetchall()
-    
-    # # 查询本期打卡天数
     # def _query_current_period_days(self, user):
     #     c = self.conn.cursor()
-    #     # Calculate the start and end dates of the current period
-    #     today = datetime.date.today()
-    #     # Get the week number (from 1 to 53)
-    #     week_number = today.isocalendar()[1]
-    #     # Check if it's an odd week
-    #     is_odd_week = week_number % 2 == 1
-    #     # `start_date`是每年的单数周的周一，这样可以确保是每两周。
-    #     # The start date is this Monday if it's an odd week, or last Monday if it's an even week
-    #     start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
-    #     # The end date is next Sunday
-    #     end_date = start_date + datetime.timedelta(days=13)
-    #     logger.debug("[DakaStats] _query_current_period_days start_date={}, end_date={}" .format(start_date, end_date))
+    #     start_date, end_date = self._get_current_month_dates()
     #     c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
     #     return c.fetchone()[0]
 
-    # # 查询本期打卡天数排行榜
+    # # 查询本月打卡天数排行榜
     # def _query_current_period_days_ranking(self):
     #     c = self.conn.cursor()
-    #     # Calculate the start and end dates of the current period
-    #     today = datetime.date.today()
-    #     # Get the week number (from 1 to 53)
-    #     week_number = today.isocalendar()[1]
-    #     # Check if it's an odd week
-    #     is_odd_week = week_number % 2 == 1
-    #     # The start date is this Monday if it's an odd week, or last Monday if it's an even week
-    #     start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
-    #     # The end date is next Sunday
-    #     end_date = start_date + datetime.timedelta(days=13)
-    #     logger.debug("[DakaStats] _query_current_period_days_ranking start_date={}, end_date={}" .format(start_date, end_date))
+    #     start_date, end_date = self._get_current_month_dates()
     #     c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
     #     return c.fetchall()
+    
+    # 查询本期打卡天数
+    def _query_current_period_days(self, user):
+        c = self.conn.cursor()
+        # Calculate the start and end dates of the current period
+        today = datetime.date.today()
+        # Get the week number (from 1 to 53)
+        week_number = today.isocalendar()[1]
+        # Check if it's an odd week
+        is_odd_week = week_number % 2 == 1
+        # `start_date`是每年的单数周的周一，这样可以确保是每两周。
+        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+        # The end date is next Sunday
+        end_date = start_date + datetime.timedelta(days=13)
+        logger.debug("[DakaStats] _query_current_period_days start_date={}, end_date={}" .format(start_date, end_date))
+        c.execute("SELECT COUNT(*) FROM daka_records WHERE user=? AND date BETWEEN ? AND ?", (user, start_date.isoformat(), end_date.isoformat()))
+        return c.fetchone()[0]
+
+    # 查询本期打卡天数排行榜
+    def _query_current_period_days_ranking(self):
+        c = self.conn.cursor()
+        # Calculate the start and end dates of the current period
+        today = datetime.date.today()
+        # Get the week number (from 1 to 53)
+        week_number = today.isocalendar()[1]
+        # Check if it's an odd week
+        is_odd_week = week_number % 2 == 1
+        # The start date is this Monday if it's an odd week, or last Monday if it's an even week
+        start_date = today - datetime.timedelta(days=today.weekday()) - datetime.timedelta(weeks=1-is_odd_week)
+        # The end date is next Sunday
+        end_date = start_date + datetime.timedelta(days=13)
+        logger.debug("[DakaStats] _query_current_period_days_ranking start_date={}, end_date={}" .format(start_date, end_date))
+        c.execute("SELECT user, COUNT(*) as days FROM daka_records WHERE date BETWEEN ? AND ? GROUP BY user ORDER BY days DESC", (start_date.isoformat(), end_date.isoformat()))
+        return c.fetchall()
     
 
     # 查询总打卡天数排行榜
@@ -190,12 +193,12 @@ class DakaStats(Plugin):
                 nickname = cmsg.from_user_id
 
         # Extract the first part of the nickname as user
+        # user: 群昵称去除`-`,` `后的内容
         user = re.split(r'-|\s', nickname)[0] # 匹配以`-`,` `切割的第一部分
 
         content = context.content
 
         # If content contains "#接龙" and match "\d{1,2}月\d{1,2}日", save the last content of one day.
-        # TODO 接龙判断群聊
         if re.search(r"#接龙", content) and re.search(r"\d{1,2}月\d{1,2}日", content):
             # Extract date from content
             match = re.search(r"(\d{1,2})月(\d{1,2})日", content)
@@ -210,10 +213,11 @@ class DakaStats(Plugin):
                 for section in sections:
                     # Extract name from section
                     name_match = re.search(r'\. ([^- ]+)', section)
+                    # name: 接龙中的昵称去除`-`,` `后的内容
                     name = name_match.group(1) if name_match else None
 
                     # Extract the rest of the section as content
-                    # TODO now content=Kevin涛-增肌 跳跃10分钟
+                    # now content=Kevin涛-增肌 跳跃10分钟
                     # want content=跳跃10分钟
                     content_text = section[section.index('.')+1:].strip() if '.' in section else None
 
@@ -223,8 +227,10 @@ class DakaStats(Plugin):
                             self._insert_record(date, nickname, user, content_text)
                             logger.debug("[DakaStats] _insert_record date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
                         else:
-                            logger.info("[DakaStats] _insert_record Not date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
+                            logger.warn("[DakaStats] _insert_record Failed! content is nil! date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
+                    else:
 
+                        logger.warn("[DakaStats] _insert_record Failed! user name is not equal! date={}, nickname={}, user={}, content={}".format(date, nickname, user, content_text))
 
     def on_handle_context(self, e_context: EventContext):
         logger.debug("[DakaStats] enter on_handle_context")
@@ -268,7 +274,7 @@ class DakaStats(Plugin):
             # Reply the user's total check-in days and the current period's check-in days, and briefly encourage the user.
             query =  f"{user}，总共打卡了{total_days}天，本期打卡了{current_period_days}天。"
             # goal_period_days = 30
-            prompt = "你是健身教练，用户的打卡信息已经被你获取，你需要回复用户的打卡天数。如果用户本期打卡天数不少于18天，进行简单赞扬，如果用户本期打卡天数少于18天，进行简单激励。\n"
+            prompt = "你是健身教练，用户的打卡信息已经被你获取，你需要回复用户的打卡天数。如果用户本期打卡天数不少于8天，进行简单赞扬，如果用户本期打卡天数少于8天，进行简单激励。\n"
             # Build a session for bot reply
             session = self.bot.sessions.build_session(session_id, prompt)
             session.add_query(query)
@@ -287,6 +293,8 @@ class DakaStats(Plugin):
 
             total_days_ranking = self._query_total_days_ranking()
             current_period_days_ranking = self._query_current_period_days_ranking()
+            logger.debug("[DakaStats] send_daily_ranking total_days_ranking: {}" .format(total_days_ranking))
+            logger.debug("[DakaStats] send_daily_ranking current_period_days_ranking: {}" .format(current_period_days_ranking))
 
             ranking_text = "总打卡排行榜：\\n"
             for i, (user, days) in enumerate(total_days_ranking):
@@ -296,10 +304,10 @@ class DakaStats(Plugin):
             for i, (user, days) in enumerate(current_period_days_ranking):
                 ranking_text += f"{i + 1}. {user}: {days}天\\n"
 
-            logger.debug("[DakaStats] send_daily_ranking ranking_text: {}" .format(ranking_text))
+            logger.info("[DakaStats] send_daily_ranking ranking_text: {}" .format(ranking_text))
             # return ranking_text
             # the prompt of output ranking
-            prompt = "请将以下的打卡排行榜发送到聊天频道：并简单激励大家参与。"
+            prompt = RANKING_PROMPT
             # Prepare a session for the bot to send the ranking text
             session_id = 'ranking'  # This can be any string, as long as it is unique for each conversation
             session = self.bot.sessions.build_session(session_id, prompt)
@@ -316,6 +324,7 @@ class DakaStats(Plugin):
             e_context.action = EventAction.BREAK_PASS  # End the event and skip the default logic for handling context
 
 
+    # TODO 优化文件名、格式、自动在线文档
     def export_records_to_markdown(self):
         # Get the current month's start and end dates
         start_date, end_date = self._get_current_month_dates()

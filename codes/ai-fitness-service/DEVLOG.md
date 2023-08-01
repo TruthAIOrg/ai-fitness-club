@@ -14,6 +14,12 @@ conda create --name ai-fitness-service-env python=3.9
 conda activate ai-fitness-service-env
 ```
 
+查看当前Python版本
+
+```Shell
+python -V
+```
+
 查看当前终端使用的 Python 路径
 
 ```Shell
@@ -22,6 +28,18 @@ conda activate ai-fitness-service-env
 ```
 
 设置 Vscode Python 解释器路径为`/Users/kevin/miniconda3/envs/ai-fitness-service-env/bin/python3`。
+
+## 要查看conda中所有的虚拟环境
+
+```Shell
+conda env list
+```
+
+## 删除一个虚拟环境
+
+```Shell
+conda env remove --name myenv
+```
 
 ## 项目搭建
 

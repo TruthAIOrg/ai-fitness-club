@@ -29,3 +29,4 @@ chatgpt_tool_hub/
 !plugins/keyword
 !plugins/daka
 !plugins/scheduledmessage
+plugins/daka_stats/output/
