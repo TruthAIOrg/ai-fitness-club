@@ -4,6 +4,7 @@
 
 ```Shell
 sqlite3 /path/to/your/database.db
+sqlite3 plugins/plugin_summary/chat.db
 ```
 
 查看所有表
@@ -56,4 +57,5 @@ UPDATE daka_records SET user = 'R老师' WHERE user = 'R';
 UPDATE daka_records SET user = '张文光' WHERE user = 'gooney';
 UPDATE daka_records SET user = '林文冠' WHERE user = '林文冠Kevin';
 UPDATE daka_records SET user = '邓邦浪' WHERE user = '浪仔';
+UPDATE daka_records SET user = '胡新华' WHERE user = '天机网.胡新华';
 ```
