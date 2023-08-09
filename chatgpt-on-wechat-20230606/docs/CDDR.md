@@ -3686,3 +3686,21 @@ UPDATE daka_records SET user = '邓邦浪' WHERE user = '浪仔';
 ```
 
 ---
+
+You
+
+---
+
+ubuntu zsh 终端怎么设置命令自动提示？
+
+---
+
+## 20230803
+
+You
+
+---
+
+
+
+---
